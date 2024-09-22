@@ -110,4 +110,6 @@ source ~/.fzf-integration.sh
 source ~/.ripgrep-integration.sh
 export PATH=$PATH:~/local/templ/
 export PATH=$PATH:~/venv/bin/
+export PATH=$PATH:~/scripts/
+export OPENAI_API_KEY=REQUIRED
 export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"A
