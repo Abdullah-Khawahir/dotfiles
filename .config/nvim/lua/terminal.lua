@@ -35,7 +35,7 @@ vim.api.nvim_create_autocmd('fileType', {
   callback = function()
     local fileType = vim.bo.filetype
     if programOf[fileType] then
-      local lua_command = string.format(":lua OpenTerm('" .. programOf[fileType] .. "')<CR>")
+      local lua_command = ":lua OpenTerm('" .. programOf[fileType] .. "')<CR>"
       -- print(lua_command)
       vim.api.nvim_buf_set_keymap(0, "n", "<leader>m", lua_command,
         { desc = "Run [M]ake Program", noremap = true, silent = true })

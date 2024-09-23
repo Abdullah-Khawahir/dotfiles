@@ -111,5 +111,5 @@ source ~/.ripgrep-integration.sh
 export PATH=$PATH:~/local/templ/
 export PATH=$PATH:~/venv/bin/
 export PATH=$PATH:~/scripts/
-export OPENAI_API_KEY=$(cat ./.open_ai_key)
+export OPENAI_API_KEY=$(cat ~/.open_ai_key)
 export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"A
