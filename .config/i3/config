@@ -51,6 +51,7 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec --no-startup-id dmenu_run
+bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
 bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort
 
 # A more modern dmenu replacement is rofi:
