@@ -10,25 +10,25 @@ vim.keymap.set('n', '<leader>q', function()
 		vim.cmd('copen')
 	end
 end, { desc = 'Toggles diagnostic [Q]uickfix list' })
-
-vim.api.nvim_create_augroup('QFKeymaps', { clear = true })
-vim.api.nvim_create_autocmd('FileType', {
-	pattern = 'qf',
-	group = "QFKeymaps",
-	callback = function()
-		vim.keymap.set('n', 'dd', function()
-			local qflist = vim.fn.getqflist()
-			local current_entry = vim.fn.line('.')
-			table.remove(qflist, current_entry)
-			vim.fn.setqflist(qflist, 'r')
-		end, { desc = 'Delete current Quickfix entry' })
-		vim.keymap.set('n', 'da', function()
-			vim.fn.setqflist({}, 'r')
-		end, { desc = 'Clear Quickfix list', silent = true })
-		vim.keymap.set('n', '<CR>', ':copen<CR>', { desc = 'Open Quickfix window', silent = true })
-		vim.keymap.set('n', 'q', ':cclose<CR>', { desc = '[Q]uit Quickfix', silent = true })
-	end
-})
+--
+-- vim.api.nvim_create_augroup('QFKeymaps', { clear = true })
+-- vim.api.nvim_create_autocmd('FileType', {
+-- 	pattern = 'qf',
+-- 	group = "QFKeymaps",
+-- 	callback = function()
+-- 		vim.keymap.set('n', 'dd', function()
+-- 			local qflist = vim.fn.getqflist()
+-- 			local current_entry = vim.fn.line('.')
+-- 			table.remove(qflist, current_entry)
+-- 			vim.fn.setqflist(qflist, 'r')
+-- 		end, { desc = 'Delete current Quickfix entry' })
+-- 		vim.keymap.set('n', 'da', function()
+-- 			vim.fn.setqflist({}, 'r')
+-- 		end, { desc = 'Clear Quickfix list', silent = true })
+-- 		vim.keymap.set('n', '<CR>', ':copen<CR>', { desc = 'Open Quickfix window', silent = true })
+-- 		vim.keymap.set('n', 'q', ':cclose<CR>', { desc = '[Q]uit Quickfix', silent = true })
+-- 	end
+-- })
 
 
 -- moving

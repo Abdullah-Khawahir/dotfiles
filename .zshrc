@@ -4,6 +4,7 @@ alias v=nvim
 alias zz='cd "$(fzf --walker=dir --preview "ls -lh --color=always {}")"'
 alias z="fzf  --walker=file --multi --preview='bat {} --style=numbers,changes'"
 alias d="dotnet"
+alias yay="yay --sudoloop"
 # export VIRTUAL_ENV="~/venv/"
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -112,4 +113,5 @@ export PATH=$PATH:~/local/templ/
 export PATH=$PATH:~/venv/bin/
 export PATH=$PATH:~/scripts/
 export OPENAI_API_KEY=$(cat ~/.open_ai_key)
-export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"A
+export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"
+source ~/.zsh_local_config.sh
