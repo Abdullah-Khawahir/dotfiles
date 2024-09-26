@@ -476,11 +476,12 @@ require('lazy').setup({
         local function map(key, func, desc)
           vim.keymap.set("n", "<leader>u" .. key, func, { desc = desc })
         end
-        -- map("c", curl.open_curl_tab, "Open curl tab")
+        map("q", ":CurlClose<CR>", "Open curl tab")
         map("o", curl.open_global_tab, "Open global curl tab")
-        map("sc", curl.create_scoped_collection, "Create/Open collection")
-        map("gc", curl.create_global_collection, "Create/Open global collection")
-        map("s", curl.pick_scoped_collection, "Choose/Open scoped collection")
+        map("cl", curl.create_scoped_collection, "Create/Open collection")
+        map("cg", curl.create_global_collection, "Create/Open global collection")
+        map("sl", curl.pick_scoped_collection, "Choose/Open scoped collection")
+        map("sg", curl.pick_scoped_collection, "Choose/Open scoped collection")
       end,
     },
   },
