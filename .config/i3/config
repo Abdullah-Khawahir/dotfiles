@@ -5,7 +5,12 @@
 
 
 set $mod Mod1
+
+# change container layout (stacked, tabbed, toggle split)
 workspace_layout tabbed
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 
@@ -63,10 +68,10 @@ bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort
 bindsym Mod4+v exec "clipmenu"
 bindsym Mod4+period exec --no-startup-id rofimoji
 # change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+semicolon focus right
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+h focus left
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -87,7 +92,7 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+h split h
+bindsym $mod+x split h
 
 # split in vertical orientation
 bindsym $mod+v split v
@@ -95,10 +100,6 @@ bindsym $mod+v split v
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
 
-# change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+t layout tabbed
-bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -140,6 +141,8 @@ bindsym $mod+0 workspace number $ws10
 bindsym $mod+ctrl+Left workspace prev
 bindsym $mod+ctrl+Right workspace next
 
+bindsym $mod+ctrl+l workspace prev
+bindsym $mod+ctrl+h workspace next
 
 # move focused container to workspace
 

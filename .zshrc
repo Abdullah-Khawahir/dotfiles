@@ -115,3 +115,5 @@ export PATH=$PATH:~/scripts/
 export OPENAI_API_KEY=$(cat ~/.open_ai_key)
 export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"
 source ~/.zsh_local_config.sh
+
+export GPG_TTY=$(tty)

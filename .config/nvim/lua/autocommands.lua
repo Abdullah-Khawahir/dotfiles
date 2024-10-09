@@ -6,13 +6,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.api.nvim_create_autocmd('TermOpen', {
-  desc = "preferences on terminal mode",
-  callback = function()
-    vim.opt_local.number = false
-    vim.opt_local.signcolumn = 'no'
-  end
-})
 
 
 local programOf = { -- retrun 1=compiler 2=run_command

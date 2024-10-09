@@ -72,7 +72,7 @@ require('lazy').setup({
             },
           },
           defaults = {
-            path_display = { "smart" },
+            -- path_display = { "smart" },
             file_ignore_patterns = {
               'node_modules',
               'bin',
@@ -80,6 +80,7 @@ require('lazy').setup({
               '%.png',
               '%.jpg',
               '%.jpg',
+              'Migrations'
             },
           },
         }
@@ -91,12 +92,17 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
         vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
         vim.keymap.set('n', '<leader>sf', function()
-            builtin.find_files { path_display = { "smart" } }
+            builtin.find_files {
+              -- path_display = { "smart" }
+            }
           end,
           { desc = '[S]earch [F]iles' })
         vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
         vim.keymap.set('n', '<leader>sw', function()
-            builtin.grep_string { opts = { path_display = { "smart" } } }
+            builtin.grep_string { opts = {
+              -- path_display = { "smart" }
+              }
+            }
           end,
           { desc = '[S]earch current [W]ord' })
         vim.keymap.set('n', '<leader>sg', function()
@@ -424,31 +430,37 @@ require('lazy').setup({
       end,
     },
     {
-      'glepnir/dashboard-nvim',
-      requires = { 'nvim-tree/nvim-web-devicons' },
-      event = 'VimEnter',
-      config = function()
-        local headers = require 'headers'
-        math.randomseed(os.time())
-        local random = math.random(1, #headers)
-        require('dashboard').setup {
-          theme = 'doom',
-          config = {
-            header = headers[random],
-          },
-        }
-      end,
-    },
-    {
       "jackMort/ChatGPT.nvim",
       event = "VeryLazy",
-      opts = {},
       dependencies = {
         "MunifTanjim/nui.nvim",
         "nvim-lua/plenary.nvim",
-        "folke/trouble.nvim",
+        {
+          "folke/trouble.nvim",
+          config = true
+        },
         "nvim-telescope/telescope.nvim"
       },
+      config = function()
+        require("chatgpt").setup({
+          openai_params = {
+            model = "gpt-4o",
+          }
+        })
+        local map = function(modes, key, cmd, descrp)
+          vim.keymap.set(modes, "<leader>c" .. key, cmd, { desc = "GPT: " .. descrp })
+        end
+
+        map('n', 'c', "<cmd>ChatGPT<CR>", "ChatGPT")
+        map({ "n", "v" }, 'e', "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction")
+        map({ "n", "v" }, 'g', "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction")
+        map({ "n", "v" }, 't', "<cmd>ChatGPTRun translate<CR>", "Translate")
+        map({ "n", "v" }, 'd', "<cmd>ChatGPTRun docstring<CR>", "Docstring")
+        map({ "n", "v" }, 'o', "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code")
+        map({ "n", "v" }, 'f', "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs")
+        map({ "n", "v" }, 'r', "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit")
+        map({ "n", "v" }, 'l', "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis")
+      end
     },
     {
       'brenoprata10/nvim-highlight-colors',
@@ -519,5 +531,6 @@ require('lazy').setup({
 require('mappings')
 require('autocommands')
 require('terminal')
+require('dash')
 -- the line beneath this is called `modeline`. see `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

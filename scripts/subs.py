@@ -124,11 +124,10 @@ def download_subs(url):
 
 def main():
     """
-    here the program asks for the show/movie `name` via input. After that the
-    program will fetch for the rquested input from an API then the choice will
-    be from a list of tv/movies. then if it movie the user will choose which
-    file he wants or if it a tv show the user will choose a season or
-    whatever is provided by the api
+    The program asks the user for the name of a show or movie, fetches the
+    requested information from an API, and presents the user with a list of TV
+    shows or movies to choose from. The user can then select a specific file for a
+    movie or a season for a TV show.
     """
     try:
         results = fetch_subtitles(input("Enter movie/show name: "))
