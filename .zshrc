@@ -106,7 +106,6 @@ export ARCHFLAGS="-arch x86_64"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # export PAGER='most'
- 
 source ~/.fzf-integration.sh
 source ~/.ripgrep-integration.sh
 export PATH=$PATH:~/local/templ/
@@ -117,3 +116,6 @@ export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"
 source ~/.zsh_local_config.sh
 
 export GPG_TTY=$(tty)
+# export PATH=$PATH:~/development/flutter/bin/
+export ANDROID_HOME=~/Android/Sdk/
+export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable

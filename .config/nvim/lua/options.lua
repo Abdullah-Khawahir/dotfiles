@@ -44,3 +44,5 @@ vim.api.nvim_create_autocmd("FileType", {
 -- compilers
 --  dotnet
 vim.g.dotnet_errors_only = true
+-- flutter
+-- vim.g.dart_sdk_path = "/path/to/flutter/bin/cache/dart-sdk"

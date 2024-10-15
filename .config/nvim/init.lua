@@ -19,14 +19,17 @@ require('lazy').setup({
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     'tpope/vim-fugitive',
     'numToStr/Comment.nvim',
+    -- 'tpope/vim-surround',
     -- Highlight todo, notes, etc in comments
     { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-    require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+    require 'kickstart.plugins.gitsigns',    -- adds gitsigns recommend keymaps
+    require 'kickstart.plugins.debug',       -- adds gitsigns recommend keymaps
+    require 'kickstart.plugins.indent_line', -- adds gitsigns recommend keymaps
     'lewis6991/gitsigns.nvim',
-    {                                     -- Useful plugin to show you pending keybinds.
+    {                                        -- Useful plugin to show you pending keybinds.
       'folke/which-key.nvim',
-      event = 'VimEnter',                 -- Sets the loading event to 'VimEnter'
-      config = function()                 -- This is the function that runs, AFTER loading
+      event = 'VimEnter',                    -- Sets the loading event to 'VimEnter'
+      config = function()                    -- This is the function that runs, AFTER loading
         require('which-key').setup()
         require('which-key').add {
           { '<leader>c', group = '[C]ode' },
@@ -101,7 +104,7 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>sw', function()
             builtin.grep_string { opts = {
               -- path_display = { "smart" }
-              }
+            }
             }
           end,
           { desc = '[S]earch current [W]ord' })
@@ -156,44 +159,34 @@ require('lazy').setup({
             local map = function(keys, func, desc)
               vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
             end
+
             local client = vim.lsp.get_client_by_id(event.data.client_id)
-            --  This is where a variable was first declared, or where a function is defined, etc.
-            --  To jump back, press <C-t>.
+
             map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-
+            map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
             map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-
             map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-
             map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-
             map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-
             map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
             map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-
             map('<leader>f', vim.lsp.buf.format, '[F]ormat Buffer')
-
-            -- Execute a code action, usually your cursor needs to be on top of an error
-            -- or a suggestion from your LSP for this to activate.
+            map('<leader>H', vim.lsp.buf.typehierarchy, 'Type [H]ierarchy')
+            map('<leader>wa', vim.lsp.buf.add_workspace_folder, '[A]dd Workspace folder')
+            vim.keymap.set('n', '<leader>wd', function(event)
+              -- vim.cmd("call setqflist([])")
+              vim.diagnostic.setqflist()
+            end, { desc = 'Workspace [d]iagnostic', buffer = event.buf })
             map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
             vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
-            -- Opens a popup that displays documentation about the word under your cursor
-            --  See `:help K` for why this keymap.
+
             map('K', vim.lsp.buf.hover, 'Hover Documentation')
             vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, { desc = 'Hover Documentation in insert mode' })
-            -- WARN: This is not Goto Definition, this is Goto Declaration.
-            --  For example, in C this would take you to the header.
-            map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
-            -- The following two autocommands are used to highlight references of the
-            -- word under your cursor when your cursor rests there for a little while.
-            --    See `:help CursorHold` for information about when this is executed
-            --
-            -- When you move your cursor, the highlights will be cleared (the second autocommand).
-            --
-            --
+            map('<leader>td', function()
+              vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+            end, '[T]oggle [D]iagnostic')
+
             if client ~= nil and (client.name == "csharp_ls" or client.name == "omnisharp") then
               map('gd', function() require('omnisharp_extended').telescope_lsp_definition() end,
                 '[G]oto [D]efinition+')
@@ -236,16 +229,9 @@ require('lazy').setup({
               })
             end
 
-            map('<leader>td', function()
-              vim.diagnostic.enable(not vim.diagnostic.is_enabled())
-            end, '[T]oggle [D]iagnostic')
-            -- The following autocommand is used to enable inlay hints in your
-            -- code, if the language server you are using supports them
-            --
-            -- This may be unwanted, since they displace some of your code
             if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
               map('<leader>th', function()
-                vim.lsp.inlay_hint.enable(false)
+                vim.lsp.inlay_hint.enable(true)
                 vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
               end, '[T]oggle Inlay [H]ints')
             end
@@ -276,14 +262,10 @@ require('lazy').setup({
           'stylua', -- Used to format Lua code
         })
         require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
         require('mason-lspconfig').setup {
           handlers = {
             function(server_name)
               local server = servers[server_name] or {}
-              -- This handles overriding only values explicitly passed
-              -- by the server configuration above. Useful when disabling
-              -- certain features of an LSP (for example, turning off formatting for tsserver)
               server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
               require('lspconfig')[server_name].setup(server)
             end,
@@ -479,6 +461,33 @@ require('lazy').setup({
       end
     },
     {
+      'akinsho/flutter-tools.nvim',
+      lazy = false,
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+        'stevearc/dressing.nvim', -- optional for vim.ui.select
+      },
+      config = function()
+        require('flutter-tools').setup {
+          lsp = {
+            on_attach = function()
+              vim.api.nvim_set_keymap('n', '<leader>pr', ":FlutterRun<CR>", { noremap = true, silent = true })
+              vim.api.nvim_set_keymap('n', '<leader>pq', ":FlutterQuit<CR>", { noremap = true, silent = true })
+              vim.api.nvim_set_keymap('n', '<leader>pd', ":FlutterDevices<CR>", { noremap = true, silent = true })
+              vim.api.nvim_set_keymap('n', '<leader>pR', ":FlutterRestart<CR>", { noremap = true, silent = true })
+              vim.api.nvim_set_keymap('n', '<leader>pa', ":FlutterReanalyze<CR>", { noremap = true, silent = true })
+              vim.api.nvim_set_keymap('n', '<leader>po', ":FlutterOutlineToggle<CR>", { noremap = true, silent = true })
+              vim.api.nvim_set_keymap('n', '<leader>pl', ":FlutterLspRestart<CR>", { noremap = true, silent = true })
+            end,
+            capabilities = require('cmp_nvim_lsp').default_capabilities(), -- for nvim-cmp (optional)
+            init_options = {
+              closingLabels = true,                                        -- Show closing labels in code
+            },
+          },
+        }
+      end,
+    },
+    {
       "oysandvik94/curl.nvim",
       dependencies = {
         "nvim-lua/plenary.nvim",
@@ -533,4 +542,5 @@ require('autocommands')
 require('terminal')
 require('dash')
 -- the line beneath this is called `modeline`. see `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et
 -- vim: ts=2 sts=2 sw=2 et

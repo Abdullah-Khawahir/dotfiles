@@ -15,21 +15,31 @@ vim.api.nvim_create_augroup('QFKeymaps', { clear = true })
 vim.api.nvim_create_autocmd('FileType', {
 	pattern = 'qf',
 	group = "QFKeymaps",
-	callback = function(bufn)
-		vim.api.nvim_buf_set_keymap(0, 'n', '<CR>', '<CR><C-w>p', { noremap = true, silent = true })
-		vim.api.nvim_buf_set_keymap(0, 'n', '<CR>', ':copen<CR>', { desc = 'Open Quickfix window', silent = true })
-		vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':cclose<CR>', { desc = '[Q]uit Quickfix', silent = true })
-		vim.api.nvim_buf_set_keymap(0, 'n', 'da', ':call setqflist([], "r")<CR>', { desc = 'Clear Quickfix list', silent = true })
+	callback = function(event)
+		local bufn = event.buf
+		-- vim.keymap.set('n', '<CR>', '<CR><C-w>p', { buffer = bufn})
+		vim.keymap.set('n', 'q', ':cclose<CR>', { buffer = bufn, desc = '[Q]uit Quickfix', silent = true })
+		vim.keymap.set('n', 'da', ':call setqflist([], "r")<CR>',
+			{ buffer = bufn, desc = 'Clear Quickfix list', silent = true })
 
 		-- delete currnet line in quickfix
-		-- vim.keymap.set('n', 'dd', function()
-		-- 	local qflist = vim.fn.getqflist()
-		-- 	local current_entry = vim.fn.line('.')
-		-- 	table.remove(qflist, current_entry)
-		-- 	vim.fn.setqflist(qflist, 'r')
-		-- end, { desc = 'Delete current Quickfix entry' })
+		vim.keymap.set('n', 'dd', function()
+			local qflist = vim.fn.getqflist()
+			local current_entry = vim.fn.line('.')
+			table.remove(qflist, current_entry)
+			vim.fn.setqflist(qflist, 'r')
+		end, { buffer = bufn, desc = 'Delete current Quickfix entry' })
 	end
 })
+vim.keymap.set({ 'n', 'v' }, '<leader>Q', function()
+	vim.fn.setqflist({ {
+		bufnr = vim.fn.bufnr('%'),
+		lnum = vim.fn.line('.'),
+		col = 1,
+		text = vim.fn.getline('.'),
+	} }, 'a')
+end
+, { desc = "add currnet line to quickfix" })
 
 
 -- moving
@@ -48,6 +58,7 @@ vim.keymap.set('n', '<C-right>', '<C-w><', { desc = 'resize right' })
 vim.keymap.set('n', '<C-down>', '<C-w>-', { desc = 'resize down' })
 vim.keymap.set('n', '<C-up>', '<C-w>+', { desc = 'resize up' })
 
+-- for going one visual line down and up in wrap mode
 -- tabs
 vim.keymap.set('n', '<Tab>', "gt")
 vim.keymap.set('n', '<S-Tab>', "gT")
@@ -64,7 +75,13 @@ vim.keymap.set('n', 'N', 'Nzz')
 vim.keymap.set('n', '<leader>pe', vim.cmd.Ex, { desc = 'opens [E]xplorer' })
 vim.keymap.set('n', '<leader>pv', '<cmd>Vex!<CR>', { desc = 'opens [V]ertical Explorer' })
 
-vim.api.nvim_set_keymap('n', '<C-i>', '<C-i>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-i>', '<C-i>', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>ra', 'yiw:%sno/<C-r>"//g<Left><Left>', { desc = "Repalce Word in [a]ll lines" })
+vim.keymap.set('v', '<leader>ra', 'y:%sno/<C-r>"//g<Left><Left>', { desc = "Repalce Word in [a]ll lines" })
+
+vim.keymap.set('n', '<leader>rc', 'yiw:sno/<C-r>"//g<Left><Left>', { desc = "Repalce Word in currnet line" })
+vim.keymap.set('v', '<leader>rc', 'y:sno/V<C-r>"//g<Left><Left>', { desc = "Repalce Selected in current line" })
 
 -- -- util functions
 -- vim.keymap.set('n', '<leader>f', function()

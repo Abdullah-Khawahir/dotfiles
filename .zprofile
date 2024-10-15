@@ -1,8 +1,7 @@
 # Check if we are on tty1
 # Set up environment variables for i3
 export XDG_CURRENT_DESKTOP=i3
-export XDG_SESSION_DESKTOP=i3
-
+xset r rate 300 40
 
 export PATH="$PATH:/home/abtuly/.dotnet/tools"
 
