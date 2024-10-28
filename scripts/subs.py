@@ -4,6 +4,7 @@ re is the Python standard library regex.
 requests is a 3rd party HTTP client.
 """
 from html.parser import HTMLParser
+import os
 import re
 import requests
 class HyperRefParser(HTMLParser):
@@ -122,6 +123,15 @@ def download_subs(url):
                 file.write(chunk)
             print(f'{filename} is downloaded')
 
+def guess_name(text=None):
+    """
+    checks the CWD for any movie name hints 
+    """
+    if text is None:
+        text = os.getcwd()
+    movie_name = text.split('/')[-1].split(' (')[0]
+    return movie_name
+
 def main():
     """
     The program asks the user for the name of a show or movie, fetches the
@@ -130,12 +140,14 @@ def main():
     movie or a season for a TV show.
     """
     try:
-        results = fetch_subtitles(input("Enter movie/show name: "))
+        gueesed_name = guess_name()
+        search_name = input(f"Enter movie/show name ({gueesed_name}): ") or gueesed_name
+        results = fetch_subtitles(search_name)
         display_results(results)
         if not results:
             return
 
-        selected = int(input("Select the movie/show : "))
+        selected = int(input("Select the movie/show (0) : ")) or 0
         link = subs_link(results[selected]['link'])
         if results[selected]['type'] == 'movie':
             sub_page = requests.get(link,timeout=30).text

@@ -10,7 +10,8 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     {
       'folke/tokyonight.nvim',
-      priority = 1000, -- Make sure to load this before all the other start plugins.
+      event = 'VimEnter', -- Load colorscheme on VimEnter to improve startup time
+      -- priority = 1000, -- Make sure to load this before all the other start plugins.
       init = function()
         vim.cmd.colorscheme 'tokyonight-night'
         vim.cmd.hi 'Comment gui=none'
@@ -19,17 +20,21 @@ require('lazy').setup({
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     'tpope/vim-fugitive',
     'numToStr/Comment.nvim',
+    'windwp/nvim-ts-autotag',
     -- 'tpope/vim-surround',
     -- Highlight todo, notes, etc in comments
     { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
     require 'kickstart.plugins.gitsigns',    -- adds gitsigns recommend keymaps
     require 'kickstart.plugins.debug',       -- adds gitsigns recommend keymaps
     require 'kickstart.plugins.indent_line', -- adds gitsigns recommend keymaps
-    'lewis6991/gitsigns.nvim',
-    {                                        -- Useful plugin to show you pending keybinds.
+    {
+      'lewis6991/gitsigns.nvim',
+      event = { 'BufRead', 'BufNewFile' }, -- Load only when reading or creating a file
+    },
+    {                                      -- Useful plugin to show you pending keybinds.
       'folke/which-key.nvim',
-      event = 'VimEnter',                    -- Sets the loading event to 'VimEnter'
-      config = function()                    -- This is the function that runs, AFTER loading
+      event = 'VimEnter',                  -- Sets the loading event to 'VimEnter'
+      config = function()                  -- This is the function that runs, AFTER loading
         require('which-key').setup()
         require('which-key').add {
           { '<leader>c', group = '[C]ode' },
@@ -49,9 +54,10 @@ require('lazy').setup({
         )
       end,
     },
-    { -- Fuzzy Finder (files, lsp, etc)
+    {                     -- Fuzzy Finder (files, lsp, etc)
       'nvim-telescope/telescope.nvim',
-      event = 'VimEnter',
+      event = 'VeryLazy', -- or a specific command like 'Telescope'
+      -- event = 'VimEnter',
       branch = '0.1.x',
       dependencies = {
         'nvim-lua/plenary.nvim',
@@ -64,6 +70,7 @@ require('lazy').setup({
         },
         { 'nvim-telescope/telescope-ui-select.nvim' },
         { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+        -- { "nvim-telescope/telescope-github.nvim" },
       },
       config = function()
         --  - Insert mode: <c-/>
@@ -77,6 +84,7 @@ require('lazy').setup({
           defaults = {
             -- path_display = { "smart" },
             file_ignore_patterns = {
+              '.git',
               'node_modules',
               'bin',
               'obj',
@@ -90,13 +98,16 @@ require('lazy').setup({
         -- Enable Telescope extensions if they are installed
         pcall(require('telescope').load_extension, 'fzf')
         pcall(require('telescope').load_extension, 'ui-select')
-
+        -- pcall(require('telescope').load_extension, 'gh')
+        -- require('telescope').load_extension('gh')
         local builtin = require 'telescope.builtin'
         vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
         vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
         vim.keymap.set('n', '<leader>sf', function()
             builtin.find_files {
-              -- path_display = { "smart" }
+              -- path_display = { "smart" },
+              hidden=true,
+              
             }
           end,
           { desc = '[S]earch [F]iles' })
@@ -173,9 +184,8 @@ require('lazy').setup({
             map('<leader>f', vim.lsp.buf.format, '[F]ormat Buffer')
             map('<leader>H', vim.lsp.buf.typehierarchy, 'Type [H]ierarchy')
             map('<leader>wa', vim.lsp.buf.add_workspace_folder, '[A]dd Workspace folder')
-            vim.keymap.set('n', '<leader>wd', function(event)
-              -- vim.cmd("call setqflist([])")
-              vim.diagnostic.setqflist()
+            vim.keymap.set('n', '<leader>wd', function()
+              -- require('trouble').
             end, { desc = 'Workspace [d]iagnostic', buffer = event.buf })
             map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
             vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
@@ -196,7 +206,7 @@ require('lazy').setup({
             end
 
 
-            if client ~= nil and client.name == "tsserver" then
+            if client ~= nil and client.name == "tsserver" or client.name == "ts_ls" then
               map('<leader>i', function()
                 vim.lsp.buf.execute_command({
                   command = "_typescript.organizeImports",
@@ -205,7 +215,15 @@ require('lazy').setup({
                 })
               end, 'Organize [I]mports')
             end
-
+            if client ~= nil then -- add project files to path
+              local project_root = client.config.root_dir
+              -- Clear existing path and add only the project root to path
+              if project_root then
+                vim.cmd('setlocal path=' .. project_root)
+                -- Optionally, include all subdirectories in the project
+                vim.cmd('setlocal path+=' .. project_root .. '/**')
+              end
+            end
             if client and client.server_capabilities.documentHighlightProvider then
               local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
               vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
@@ -291,6 +309,7 @@ require('lazy').setup({
               'rafamadriz/friendly-snippets',
               config = function()
                 require('luasnip.loaders.from_vscode').lazy_load()
+                require('luasnip.loaders.from_lua').load({ paths = "~/.config/nvim/lua/snippets/" })
               end,
             },
           },
@@ -300,10 +319,8 @@ require('lazy').setup({
         'hrsh7th/cmp-path',
       },
       config = function()
-        -- See `:help cmp`
         local cmp = require 'cmp'
         local luasnip = require 'luasnip'
-        luasnip.config.setup {}
         cmp.setup {
           view = {
             docs = {
@@ -314,7 +331,7 @@ require('lazy').setup({
             completion = cmp.config.window.bordered(),
             documentation = cmp.config.window.bordered(),
           },
-          completion = { completeopt = 'menu,menuone,noselect' },
+          completion = { completeopt = 'menu,menuone,preview,noselect,popup' },
           mapping = cmp.mapping.preset.insert {
             ['<C-n>'] = cmp.mapping.select_next_item(),
             ['<C-p>'] = cmp.mapping.select_prev_item(),
@@ -359,6 +376,7 @@ require('lazy').setup({
             { name = 'nvim_lsp' },
             { name = 'path' },
             { name = 'luasnip' },
+            { name = 'buffer' },
           },
           snippet = {
             expand = function(args)
@@ -426,14 +444,31 @@ require('lazy').setup({
       config = function()
         require("chatgpt").setup({
           openai_params = {
-            model = "gpt-4o",
+            -- NOTE: model can be a function returning the model name
+            -- this is useful if you want to change the model on the fly
+            -- using commands
+            -- Example:
+            -- model = function()
+            --     if some_condition() then
+            --         return "gpt-4-1106-preview"
+            --     else
+            --         return "gpt-3.5-turbo"
+            --     end
+            -- end,
+            -- model = "gpt-4o",
+            frequency_penalty = 0,
+            presence_penalty = 0,
+            max_tokens = 4095,
+            temperature = 0.2,
+            top_p = 0.1,
+            n = 1,
           }
         })
         local map = function(modes, key, cmd, descrp)
           vim.keymap.set(modes, "<leader>c" .. key, cmd, { desc = "GPT: " .. descrp })
         end
 
-        map('n', 'c', "<cmd>ChatGPT<CR>", "ChatGPT")
+        map({ "n", "v" }, 'c', "<cmd>ChatGPT<CR>", "ChatGPT")
         map({ "n", "v" }, 'e', "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction")
         map({ "n", "v" }, 'g', "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction")
         map({ "n", "v" }, 't', "<cmd>ChatGPTRun translate<CR>", "Translate")
@@ -442,6 +477,7 @@ require('lazy').setup({
         map({ "n", "v" }, 'f', "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs")
         map({ "n", "v" }, 'r', "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit")
         map({ "n", "v" }, 'l', "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis")
+        map({ "n", "v" }, 'h', "<cmd>ChatGPTRun explain_code<CR>", "Code Explaination")
       end
     },
     {
@@ -451,10 +487,10 @@ require('lazy').setup({
       config = function()
         local plugin = require("nvim-highlight-colors")
         plugin.setup {
-          render = 'virtual',
-          virtual_symbol_position = 'eol',
+          -- render = 'virtual',
+          -- virtual_symbol_position = 'eol',
           -- virtual_symbol = '🌑',  -- pink #AA00FF
-          virtual_symbol_prefix = ' ',
+          -- virtual_symbol_prefix = ' ',
         }
         plugin.turnOff()
         vim.keymap.set('n', '<leader>tc', plugin.toggle, { desc = "toggle highlight color" })
