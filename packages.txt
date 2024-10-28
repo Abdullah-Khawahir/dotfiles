@@ -3,6 +3,7 @@ alacritty
 autojump
 awk
 bash
+bat
 chromium
 clipmenu
 cmake
@@ -14,8 +15,10 @@ e2fsprogs
 eog
 evince
 exfat-utils
+fd
 firefox
 font-manager
+fontconfig
 freedownloadmanager
 fzf
 gcc
@@ -51,6 +54,7 @@ pcmanfm
 picom
 pipewire
 python
+python-pynvim
 ripgrep
 rofi
 rofi-calc
@@ -72,10 +76,7 @@ vi
 vim
 vlc
 wget
+xclip
 xf86-input-libinput
 yay
 zsh
-bat
-fd
-xclip
-fontconfig
