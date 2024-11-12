@@ -6,22 +6,19 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- vim.api.nvim_create_autocmd('fileType', {
---   pattern = 'fugitive',
---   callback = function(event)
---     vim.keymap.set('n', '<CR>', "<C-w>p<CR>", { buffer = event.buf })
---   end
--- })
 
-local function set_keymap(run_command, compiler)
-  local lua_run_command = ":lua OpenTerm('" .. run_command .. "')<CR>"
+
+local function set_keymap(run_command, compiler, opt)
+  opt = opt or {}
+  local lua_run_command = ":lua OpenTerm('" .. run_command .. (opt.run_command_opt or '') .. "')<CR>"
   vim.api.nvim_buf_set_keymap(0, "n", "<leader>m", lua_run_command,
     { desc = "Run [M]ake Program", noremap = true, silent = true })
 
   vim.cmd('compiler ' .. compiler)
-  vim.api.nvim_buf_set_keymap(0, "n", "<leader>wb", ":make<CR>",
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>wb", ":make" .. (opt.compiler_opt or '') .. "<CR>",
     { desc = "Run WorkSpace [B]uild" })
 end
+
 
 
 vim.api.nvim_create_autocmd('fileType', { -- csharp
@@ -35,11 +32,11 @@ vim.api.nvim_create_autocmd('fileType', { -- csharp
 
 
 vim.api.nvim_create_autocmd('fileType', { -- javascipt typescrip
-  pattern = { 'js', 'jsx', 'ts', 'tsx', 'javascipt', 'javascriptreact', 'typescipt', 'typescriptreact' },
+  pattern = { 'js', 'jsx', 'ts', 'tsx', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
   callback = function()
     local run_command = 'npm run start'
     local compiler = 'eslint'
-    set_keymap(run_command, compiler)
+    set_keymap(run_command, compiler, { compiler_opt = " . " })
   end
 })
 

@@ -18,15 +18,27 @@ require('lazy').setup({
       end,
     },
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-    'tpope/vim-fugitive',
+    'tpope/vim-surround',
+    'tpope/vim-repeat',
+    {
+      'tpope/vim-fugitive',
+      config = function()
+        vim.keymap.set("n", "<leader>gs", ":G<CR>", { desc = "Git status" })
+        vim.keymap.set("n", "<leader>gc", ":G commit<CR>", { desc = "Git commit" })
+        vim.keymap.set("n", "<leader>gaf", ":G add %<CR>", { desc = "Git add file" })
+        vim.keymap.set("n", "<leader>gad", ":G add <C-r>=expand('%:h')<CR>", { desc = "Git add directory" })
+        vim.keymap.set("n", "<leader>gac", ":G commit %<CR>", { desc = "Git commit file" })
+        vim.keymap.set("n", "<leader>gvd", ":Gvdiffsplit<CR>", { desc = "Git vertical diff split" })
+      end
+    },
     'numToStr/Comment.nvim',
     'windwp/nvim-ts-autotag',
     -- 'tpope/vim-surround',
     -- Highlight todo, notes, etc in comments
     { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-    require 'kickstart.plugins.gitsigns',    -- adds gitsigns recommend keymaps
-    require 'kickstart.plugins.debug',       -- adds gitsigns recommend keymaps
-    require 'kickstart.plugins.indent_line', -- adds gitsigns recommend keymaps
+    require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+    require 'kickstart.plugins.debug',    -- adds gitsigns recommend keymaps
+    -- require 'kickstart.plugins.indent_line', -- adds gitsigns recommend keymaps
     {
       'lewis6991/gitsigns.nvim',
       event = { 'BufRead', 'BufNewFile' }, -- Load only when reading or creating a file
@@ -106,8 +118,8 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>sf', function()
             builtin.find_files {
               -- path_display = { "smart" },
-              hidden=true,
-              
+              hidden = true,
+
             }
           end,
           { desc = '[S]earch [F]iles' })
@@ -185,8 +197,13 @@ require('lazy').setup({
             map('<leader>H', vim.lsp.buf.typehierarchy, 'Type [H]ierarchy')
             map('<leader>wa', vim.lsp.buf.add_workspace_folder, '[A]dd Workspace folder')
             vim.keymap.set('n', '<leader>wd', function()
-              -- require('trouble').
+              vim.diagnostic.setqflist()
             end, { desc = 'Workspace [d]iagnostic', buffer = event.buf })
+
+            vim.keymap.set('n', '<leader>we', function()
+              vim.diagnostic.setqflist({severity=vim.diagnostic.severity.ERROR})
+            end, { desc = 'Workspace [d]iagnostic [e]rrors', buffer = event.buf })
+
             map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
             vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
 
@@ -257,12 +274,19 @@ require('lazy').setup({
         })
         local capabilities = vim.lsp.protocol.make_client_capabilities()
         capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+        require('lspconfig').ts_ls.setup({
+          init_options = {
+            preferences = {
+              importModuleSpecifierPreference = 'relative',
+              importModuleSpecifierEnding = 'minimal',
+            },
+          }
+        })
         local servers = {
           -- clangd = {}
           -- gopls = {},
           -- pyright = {},
           -- rust_analyzer = {},
-          -- tsserver = {},
           lua_ls = {
             settings = {
               Lua = {
@@ -492,7 +516,7 @@ require('lazy').setup({
           -- virtual_symbol = '🌑',  -- pink #AA00FF
           -- virtual_symbol_prefix = ' ',
         }
-        plugin.turnOff()
+        plugin.turnOn()
         vim.keymap.set('n', '<leader>tc', plugin.toggle, { desc = "toggle highlight color" })
       end
     },
@@ -525,6 +549,7 @@ require('lazy').setup({
     },
     {
       "oysandvik94/curl.nvim",
+      event = "VeryLazy",
       dependencies = {
         "nvim-lua/plenary.nvim",
       },
@@ -578,5 +603,4 @@ require('autocommands')
 require('terminal')
 require('dash')
 -- the line beneath this is called `modeline`. see `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
 -- vim: ts=2 sts=2 sw=2 et

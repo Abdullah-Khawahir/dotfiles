@@ -110,11 +110,10 @@ vim.keymap.set('n', '<leader>rc', ":sno/<C-r>=expand('<cword>')<CR>//gc<Left><Le
 	{ desc = "Repalce Word in currnet line" })
 vim.keymap.set('v', '<leader>rc', '\"sy:sno/<C-r>s//gc<Left><Left><Left>', { desc = "Replace Selected in current line" })
 
-vim.keymap.set('n', "<leader>waf", ":e <C-r>=expand('%:p:h')<CR>", { desc = "Add [F]ile" })
-vim.keymap.set('n', "<leader>wad", ":!mkdir -p <C-r>=expand('%:p:h')<CR>", { desc = "Add [D]irecory" })
+vim.keymap.set('n', "<leader>waf", ":e <C-r>=expand('%:p:h')<CR>/", { desc = "Add [F]ile" })
+vim.keymap.set('n', "<leader>wad", ":!mkdir -p <C-r>=expand('%:p:h')<CR>/", { desc = "Add [D]irecory" })
 
 
--- vim.keymap.set('n', '\\gn', ':setglobal nu! | setglobal rnu!<CR>', { desc = 'Number Toggle' })
 -- toggle mappings
 IS_ARABIC = false
 vim.keymap.set('n', '<leader>ta', function()
@@ -131,7 +130,6 @@ vim.keymap.set('n', '<leader>ta', function()
 end, { desc = '[A]rabic Toggle' })
 vim.keymap.set('n', '<leader>tr', ':set wrap!<CR>', { desc = 'W[r]ap Toggle' })
 
-vim.keymap.set('n', '\\n', ':set nu! | set rnu!<CR>', { desc = 'Number Toggle' })
 vim.keymap.set('n', '\\c', function()
 	if vim.o.cmdheight == 0 then
 		vim.o.cmdheight = 1
@@ -150,7 +148,13 @@ vim.keymap.set('n', '\\c', function()
 end, { desc = 'Cmd Toggle' })
 
 vim.keymap.set('n', '\\r', ':set wrap!<CR>', { desc = 'Wrap Toggle' })
+vim.keymap.set('n', '\\gr', ':windo set wrap!<CR>', { desc = 'Wrap Toggle' })
+
 vim.keymap.set('n', '\\s', ':set spell!<CR>', { desc = 'spell Toggle' })
+vim.keymap.set('n', '\\gs', ':windo set spell!<CR>', { desc = 'spell Toggle' })
+
+vim.keymap.set('n', '\\n', ':set rnu! nu!<CR>', { desc = 'Number Toggle' })
+vim.keymap.set('n', '\\gn', ':windo set  rnu! nu!<CR>', { desc = 'Number Toggle' })
 
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
