@@ -27,6 +27,7 @@ vim.opt.inccommand     = 'split'
 vim.opt.cursorline     = true
 vim.opt.scrolloff      = 10
 vim.opt.hlsearch       = true
+vim.opt.linebreak      = true
 -- vim.opt.path           = vim.opt.path + '**'
 -- vim.opt.path           = vim.opt.path - 'node_modules/**'
 vim.cmd("set path+=**")
