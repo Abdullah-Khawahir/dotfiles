@@ -80,3 +80,4 @@ xclip
 xf86-input-libinput
 yay
 zsh
+scrot

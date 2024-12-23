@@ -4,9 +4,16 @@ vim.g.maplocalleader   = ' '
 vim.g.have_nerd_font   = true
 vim.o.wrap             = false
 vim.o.colorcolumn      = '80'
+
 vim.o.tabstop          = 4
+vim.o.shiftwidth       = 4
+vim.o.expandtab        = true
+vim.o.smarttab         = true
+vim.o.autoindent       = true
+
 vim.opt.number         = true
 vim.opt.relativenumber = true
+
 vim.opt.mouse          = 'a'
 vim.opt.termguicolors  = true
 vim.opt.showmode       = false
@@ -16,6 +23,7 @@ vim.opt.undofile       = true
 vim.opt.termbidi       = true
 vim.opt.ignorecase     = true
 vim.opt.smartcase      = true
+vim.opt.wildignorecase = true
 vim.opt.signcolumn     = 'yes'
 vim.opt.updatetime     = 100
 vim.opt.timeoutlen     = 500
@@ -28,6 +36,7 @@ vim.opt.cursorline     = true
 vim.opt.scrolloff      = 10
 vim.opt.hlsearch       = true
 vim.opt.linebreak      = true
+
 -- vim.opt.path           = vim.opt.path + '**'
 -- vim.opt.path           = vim.opt.path - 'node_modules/**'
 vim.cmd("set path+=**")
@@ -43,10 +52,10 @@ vim.g.netrw_winsize         = 30
 vim.g.netrw_preview         = 1
 vim.g.netrw_winsize         = 30
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "netrw",
-  callback = function()
-    vim.bo.bufhidden = "wipe"
-  end,
+	pattern = "netrw",
+	callback = function()
+		vim.bo.bufhidden = "wipe"
+	end,
 })
 
 -- compilers

@@ -2,9 +2,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
 	callback = function(event)
 		local map = function(keys, func, desc)
-			if func then
-				vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
-			end
+			vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
 		end
 
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -14,19 +12,29 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		map('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
 		map('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
 		map('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-
-		if client.server_capabilities.documentSymbolProvider then
-			map('<leader>ds', vim.lsp.buf.document_symbol, '[D]ocument [S]ymbols')
-		end
-
-		if client.server_capabilities.workspaceSymbolProvider then
-			map('<leader>ws', vim.lsp.buf.workspace_symbol, '[W]orkspace [S]ymbols')
-		end
-
+		map('<leader>ds', vim.lsp.buf.document_symbol, '[D]ocument [S]ymbols')
+		map('<leader>ws', vim.lsp.buf.workspace_symbol, '[W]orkspace [S]ymbols')
 		map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 		map('<leader>f', vim.lsp.buf.format, '[F]ormat Buffer')
-		map('<leader>H', vim.lsp.buf.type_hierarchy, 'Type [H]ierarchy')
+		map('<leader>H', vim.lsp.buf.typehierarchy, 'Type [H]ierarchy')
 		map('<leader>wa', vim.lsp.buf.add_workspace_folder, '[A]dd Workspace folder')
+		vim.keymap.set('n', '<leader>wd', function()
+			vim.diagnostic.setqflist()
+		end, { desc = 'Workspace [d]iagnostic', buffer = event.buf })
+
+		vim.keymap.set('n', '<leader>we', function()
+			vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
+		end, { desc = 'Workspace [d]iagnostic [e]rrors', buffer = event.buf })
+
+		map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+		vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
+
+		map('K', vim.lsp.buf.hover, 'Hover Documentation')
+		vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, { desc = 'Hover Documentation in insert mode' })
+
+		map('<leader>td', function()
+			vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+		end, '[T]oggle [D]iagnostic')
 
 		if client ~= nil and (client.name == "csharp_ls" or client.name == "omnisharp") then
 			map('gd', function() require('omnisharp_extended').lsp_definition() end,
@@ -35,6 +43,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 			map('gr', require('omnisharp_extended').lsp_references, '[G]oto [R]eferences+')
 			map('gI', require('omnisharp_extended').lsp_implementation, '[G]oto [I]mplementation+')
 		end
+
 
 		if client ~= nil and client.name == "tsserver" or client.name == "ts_ls" then
 			map('<leader>i', function()
@@ -84,6 +93,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 			end, '[T]oggle Inlay [H]ints')
 		end
-		print("LSP attached for client: " .. client.name)
 	end,
 })

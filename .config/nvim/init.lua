@@ -30,11 +30,16 @@ require('lazy').setup({
       vim.keymap.set("n", "<leader>gvd", ":Gvdiffsplit<CR>", { desc = "Git vertical diff split" })
     end
   },
-  { -- LSP Configuration & Plugins
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  {
+    'lewis6991/gitsigns.nvim',
+    event = { 'BufRead', 'BufNewFile' }, -- Load only when reading or creating a file
+  },
+  {                                      -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      { 'williamboman/mason.nvim', config = true },   -- NOTE: Must be loaded before dependants
+      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       'Hoffs/omnisharp-extended-lsp.nvim',
@@ -76,7 +81,7 @@ require('lazy').setup({
 
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua',   -- Used to format Lua code
+        'stylua', -- Used to format Lua code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
       require('mason-lspconfig').setup {
@@ -90,7 +95,7 @@ require('lazy').setup({
       }
     end,
   },
-  {   -- Autocompletion
+  { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
     dependencies = {
@@ -188,6 +193,45 @@ require('lazy').setup({
       }
     end,
   },
+  {
+    "jackMort/ChatGPT.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      {
+        "folke/trouble.nvim",
+        config = true
+      },
+      "nvim-telescope/telescope.nvim"
+    },
+    config = function()
+      require("chatgpt").setup({
+        openai_params = {
+          frequency_penalty = 0,
+          presence_penalty = 0,
+          max_tokens = 4095,
+          temperature = 0.2,
+          top_p = 0.1,
+          n = 1,
+        }
+      })
+      local map = function(modes, key, cmd, descrp)
+        vim.keymap.set(modes, "<leader>c" .. key, cmd, { desc = "GPT: " .. descrp })
+      end
+
+      map({ "n", "v" }, 'c', "<cmd>ChatGPT<CR>", "ChatGPT")
+      map({ "n", "v" }, 'e', "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction")
+      map({ "n", "v" }, 'g', "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction")
+      map({ "n", "v" }, 't', "<cmd>ChatGPTRun translate<CR>", "Translate")
+      map({ "n", "v" }, 'd', "<cmd>ChatGPTRun docstring<CR>", "Docstring")
+      map({ "n", "v" }, 'o', "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code")
+      map({ "n", "v" }, 'f', "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs")
+      map({ "n", "v" }, 'r', "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit")
+      map({ "n", "v" }, 'l', "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis")
+      map({ "n", "v" }, 'h', "<cmd>ChatGPTRun explain_code<CR>", "Code Explaination")
+    end
+  }
 })
 
 -- require('lazy').setup({
