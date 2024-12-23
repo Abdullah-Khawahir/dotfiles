@@ -7,6 +7,7 @@ from html.parser import HTMLParser
 import os
 import re
 import requests
+import urllib.parse
 class HyperRefParser(HTMLParser):
     """
     Parser for extracting the hrefs from a tages like "<a href ..."
@@ -60,7 +61,7 @@ def search_url(name):
     """
     build a full url for by a search name
     """
-    return f"https://api.subdl.net/auto?query={name}"
+    return f"https://api.subdl.net/auto?query={urllib.parse.quote(name)}"
 
 def subs_link(link):
     """
@@ -147,7 +148,7 @@ def main():
         if not results:
             return
 
-        selected = int(input("Select the movie/show (0) : ")) or 0
+        selected = int(input("Select the movie/show (0) : ") or 0)
         link = subs_link(results[selected]['link'])
         if results[selected]['type'] == 'movie':
             sub_page = requests.get(link,timeout=30).text
