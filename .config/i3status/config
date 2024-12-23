@@ -12,7 +12,7 @@ general {
 	output_format = i3bar
 }
 
- order += "tztime KB_LAYOUT"
+order += "tztime KB_LAYOUT"
 order += "volume master"
 order += "cpu_temperature 2"
 order += "cpu_temperature 1"
@@ -25,9 +25,9 @@ order += "disk /"
 order += "memory"
 order += "tztime local"
  
-# tztime KB_LAYOUT {
-#        format = "KB_LAYOUT"
-# }
+tztime KB_LAYOUT {
+       format = "KB_LAYOUT"
+}
 
 cpu_temperature 2 {
         format = "%degrees °C"
