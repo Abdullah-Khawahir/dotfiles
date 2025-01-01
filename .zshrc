@@ -124,13 +124,13 @@ source $ZSH/oh-my-zsh.sh
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
- export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
-  export EDITOR='vim'
+  export EDITOR='nvim'
 fi
 
 # Compilation flags
@@ -146,16 +146,18 @@ export ARCHFLAGS="-arch x86_64"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # export PAGER='most'
+export ANDROID_HOME=~/Android/Sdk/
+export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
+export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"
+export OPENAI_API_KEY=$(cat ~/.open_ai_key)
+export PATH=$PATH:~/development/flutter/bin/
+export PATH=$PATH:~/local/templ/
+export PATH=$PATH:~/scripts/
+export PATH=$PATH:~/venv/bin/
+
+
 source ~/.fzf-integration.sh
 source ~/.ripgrep-integration.sh
-export PATH=$PATH:~/local/templ/
-export PATH=$PATH:~/venv/bin/
-export PATH=$PATH:~/scripts/
-export OPENAI_API_KEY=$(cat ~/.open_ai_key)
-export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"
 source ~/.zsh_local_config.sh
 
 export GPG_TTY=$(tty)
-# export PATH=$PATH:~/development/flutter/bin/
-export ANDROID_HOME=~/Android/Sdk/
-export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable

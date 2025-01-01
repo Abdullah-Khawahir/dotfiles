@@ -27,6 +27,8 @@ imap('<C-S-s>', "<Esc>:wa<CR>a", { desc = 'Show diagnostic [E]rror messages' })
 nmap('<leader><leader>', ":b ", { desc = 'go to buffer ' })
 
 -- quickfix
+nmap(']q', ':cn<CR>', { silent = true })
+nmap('[q', ':cp<CR>', { silent = true })
 nmap('<leader>q', function()
     if vim.api.nvim_buf_get_option(0, 'buftype') == 'quickfix' then
         vim.cmd('cclose')
@@ -131,13 +133,20 @@ vmap("s[", "di[<C-r>\"]", { desc = "autoclosing" })
 vmap("s{", "di{<C-r>\"}", { desc = "autoclosing" })
 vmap("s<", "di<<C-r>\">", { desc = "autoclosing" })
 
-nmap('<leader>pe', vim.cmd.Ex, { desc = 'opens [E]xplorer' })
+nmap('<leader>pe', vim.cmd.Ntree, { desc = 'opens [E]xplorer' })
 nmap('<leader>pv', '<cmd>Vex!<CR>', { desc = 'opens [V]ertical Explorer' })
 
 -- search and find mappings
 nmap('<leader>po', ':args **/*', { desc = '[O]pen files using glob' })
+nmap('<leader>pt', function()
+    vim.cmd(":enew")
+    vim.cmd(":%!tree --gitignore -t -r")
+    vim.cmd(":setlocal nomodifiable")
+    vim.cmd(":set buftype=nofile")
+end, { desc = '[O]pen project [t]ree' })
 nmap('<leader>sf', ':args **/*', { desc = 'Open [f]iles using glob' })
 nmap('<leader>sn', ':args ~/.config/nvim/**/*', { desc = 'Open co[n]fig files using glob' })
+-- nmap('<leader>sn', ':args ~/AppData/Local/nvim/**/*', { desc = 'Open co[n]fig files using glob' })
 nmap('<leader>sh', ':help ', { desc = 'Open [h]elp' })
 
 nmap('<leader>sw', ":vim// **<Left><Left><Left><Left>",

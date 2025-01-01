@@ -77,7 +77,7 @@ bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
 #clipmenu:
-bindsym Mod4+v exec "clipmenu"
+bindsym Mod4+v exec --no-startup-id "clipmenu"
 bindsym Mod4+period exec --no-startup-id rofimoji
 # change focus
 bindsym $mod+j focus down

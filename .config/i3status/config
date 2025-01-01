@@ -9,7 +9,7 @@
 general {
         colors = true
         interval = 1
-	output_format = i3bar
+        output_format = i3bar
 }
 
 order += "tztime KB_LAYOUT"
@@ -24,9 +24,9 @@ order += "disk /"
 #order += "load"
 order += "memory"
 order += "tztime local"
- 
+
 tztime KB_LAYOUT {
-       format = "KB_LAYOUT"
+        format = "KB_LAYOUT"
 }
 
 cpu_temperature 2 {
@@ -53,20 +53,20 @@ wireless _first_ {
 }
 
 ethernet _first_ {
-        format_up = "E: %ip (%speed)"
+    format_up = "E: %ip (%speed)"
         format_down = "E: down"
 }
 
 battery all {
-        format = "%status %percentage %remaining"
+    format = "%status %percentage %remaining"
 }
 
 disk "/" {
-        format = "FREE:%avail"
+    format = "FREE:%avail"
 }
 
 load {
-        format = "%1min"
+    format = "%1min"
 }
 
 memory {
@@ -76,13 +76,13 @@ memory {
 }
 
 tztime local {
-        format = " %U:%A | %eth of %b %Y | %Y-%m-%d | %r"
+    format = " %U:%A | %eth of %b %Y | %Y-%m-%d | %r"
 
 }
 
 volume master {
-                   format = "♪: %volume"
-                   format_muted = "♪: muted (%volume)"
-                   #device = "pulse:alsa_output.pci-0000_00_14.2.analog-stereo"
+        format = "♪: %volume"
+        format_muted = "♪: muted (%volume)"
+#device = "pulse:alsa_output.pci-0000_00_14.2.analog-stereo"
 }
 

@@ -1,5 +1,7 @@
 # Check if we are on tty1
 # Set up environment variables for i3
+echo "starting i3wm in 2 seconds ..."
+sleep 2
 export XDG_CURRENT_DESKTOP=i3
 
 export PATH="$PATH:/home/abtuly/.dotnet/tools"
