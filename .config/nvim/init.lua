@@ -7,247 +7,254 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+require('mappings')
 require("lsp")
 require('lazy').setup({
-    {
-      'folke/tokyonight.nvim',
-      event = 'VimEnter', -- Load colorscheme on VimEnter to improve startup time
-      -- priority = 1000, -- Make sure to load this before all the other start plugins.
-      init = function()
-        vim.cmd.colorscheme 'tokyonight-night'
-        vim.cmd.hi 'Comment gui=none'
-      end,
-    },
-
-    {
-      'tpope/vim-fugitive',
-      config = function()
-        vim.keymap.set("n", "<leader>gs", ":G<CR>", { desc = "Git status" })
-        vim.keymap.set("n", "<leader>gc", ":G commit<CR>", { desc = "Git commit" })
-        vim.keymap.set("n", "<leader>gaf", ":G add %<CR>", { desc = "Git add file" })
-        vim.keymap.set("n", "<leader>gad", ":G add <C-r>=expand('%:h')<CR>", { desc = "Git add directory" })
-        vim.keymap.set("n", "<leader>gac", ":G commit %<CR>", { desc = "Git commit file" })
-        vim.keymap.set("n", "<leader>gvd", ":Gvdiffsplit<CR>", { desc = "Git vertical diff split" })
-      end
-    },
-    require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-    {
-      'lewis6991/gitsigns.nvim',
-      event = { 'BufRead', 'BufNewFile' }, -- Load only when reading or creating a file
-    },
-    {                                      -- Highlight, edit, and navigate code
-      'nvim-treesitter/nvim-treesitter',
-      build = ':TSUpdate',
-      opts = {
-        ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
-        auto_install = true,
-        highlight = {
-          enable = true,
-          additional_vim_regex_highlighting = { 'ruby' },
-        },
+  {
+    'folke/tokyonight.nvim',
+    event = 'VimEnter', -- Load colorscheme on VimEnter to improve startup time
+    priority = 1000,    -- Make sure to load this before all the other start plugins.
+    init = function()
+      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.hi 'Comment gui=none'
+    end,
+  },
+  {
+    'tpope/vim-fugitive',
+    config = function()
+      vim.keymap.set("n", "<leader>gs", ":G<CR>", { desc = "Git status" })
+      vim.keymap.set("n", "<leader>gc", ":G commit<CR>", { desc = "Git commit" })
+      vim.keymap.set("n", "<leader>gaf", ":G add %<CR>", { desc = "Git add file" })
+      vim.keymap.set("n", "<leader>gad", ":G add <C-r>=expand('%:h')<CR>", { desc = "Git add directory" })
+      vim.keymap.set("n", "<leader>gac", ":G commit %<CR>", { desc = "Git commit file" })
+      vim.keymap.set("n", "<leader>gvd", ":Gvdiffsplit<CR>", { desc = "Git vertical diff split" })
+    end
+  },
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  {
+    'lewis6991/gitsigns.nvim',
+    event = { 'BufRead', 'BufNewFile' }, -- Load only when reading or creating a file
+  },
+  {
+    'm4xshen/autoclose.nvim',
+    config = function()
+      require("autoclose").setup()
+    end
+  },
+  { -- Highlight, edit, and navigate code
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+    opts = {
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      auto_install = true,
+      highlight = {
+        enable = true,
+        additional_vim_regex_highlighting = { 'ruby' },
       },
-      config = function(_, opts)
-        require('nvim-treesitter.install').prefer_git = true
-        require('nvim-treesitter.configs').setup(opts)
-      end,
     },
-    { -- LSP Configuration & Plugins
-      'neovim/nvim-lspconfig',
-      dependencies = {
-        -- Automatically install LSPs and related tools to stdpath for Neovim
-        { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
-        'williamboman/mason-lspconfig.nvim',
-        'WhoIsSethDaniel/mason-tool-installer.nvim',
-        'Hoffs/omnisharp-extended-lsp.nvim',
-        -- Useful status updates for LSP.
-        { 'j-hui/fidget.nvim',       opts = {} },
-        -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-        -- used for completion, annotations and signatures of Neovim apis
-        { 'folke/neodev.nvim',       opts = {} },
+    config = function(_, opts)
+      require('nvim-treesitter.install').prefer_git = true
+      require('nvim-treesitter.configs').setup(opts)
+    end,
+  },
+  { -- LSP Configuration & Plugins
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      -- Automatically install LSPs and related tools to stdpath for Neovim
+      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+      'williamboman/mason-lspconfig.nvim',
+      'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'Hoffs/omnisharp-extended-lsp.nvim',
+      -- Useful status updates for LSP.
+      { 'j-hui/fidget.nvim',       opts = {} },
+      -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
+      -- used for completion, annotations and signatures of Neovim apis
+      { 'folke/neodev.nvim',       opts = {} },
 
-        'mfussenegger/nvim-jdtls',
-      },
-      config = function()
-        local capabilities = vim.lsp.protocol.make_client_capabilities()
-        capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-        require('lspconfig').ts_ls.setup({
-          init_options = {
-            preferences = {
-              importModuleSpecifierPreference = 'relative',
-              importModuleSpecifierEnding = 'minimal',
-            },
-          }
-        })
-        local servers = {
-          -- clangd = {}
-          gopls = {},
-          -- pyright = {},
-          -- rust_analyzer = {},
-          lua_ls = {
-            settings = {
-              Lua = {
-                completion = {
-                  callSnippet = 'Replace',
-                },
+      'mfussenegger/nvim-jdtls',
+    },
+    config = function()
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      require('lspconfig').ts_ls.setup({
+        init_options = {
+          preferences = {
+            importModuleSpecifierPreference = 'relative',
+            importModuleSpecifierEnding = 'minimal',
+          },
+        }
+      })
+      local servers = {
+        -- clangd = {}
+        gopls = {},
+        -- pyright = {},
+        -- rust_analyzer = {},
+        lua_ls = {
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = 'Replace',
               },
             },
           },
-        }
-        require('mason').setup()
+        },
+      }
+      require('mason').setup()
 
-        local ensure_installed = vim.tbl_keys(servers or {})
-        vim.list_extend(ensure_installed, {
-          'stylua', -- Used to format Lua code
-        })
-        require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-        require('mason-lspconfig').setup {
-          handlers = {
-            function(server_name)
-              local server = servers[server_name] or {}
-              server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-              require('lspconfig')[server_name].setup(server)
+      local ensure_installed = vim.tbl_keys(servers or {})
+      vim.list_extend(ensure_installed, {
+        'stylua', -- Used to format Lua code
+      })
+      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      require('mason-lspconfig').setup {
+        handlers = {
+          function(server_name)
+            local server = servers[server_name] or {}
+            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+            require('lspconfig')[server_name].setup(server)
+          end,
+        },
+      }
+      -- require("lspconfig").dartls.setup {}
+    end,
+  },
+  { -- Autocompletion
+    'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
+    dependencies = {
+      -- Snippet Engine & its associated nvim-cmp source
+      {
+        'L3MON4D3/LuaSnip',
+        build = (function()
+          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+            return
+          end
+          return 'make install_jsregexp'
+        end)(),
+        dependencies = {
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+              require('luasnip.loaders.from_lua').load({ paths = "~/.config/nvim/lua/snippets/" })
             end,
           },
-        }
-      end,
+        },
+      },
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
     },
-    { -- Autocompletion
-      'hrsh7th/nvim-cmp',
-      event = 'InsertEnter',
-      dependencies = {
-        -- Snippet Engine & its associated nvim-cmp source
-        {
-          'L3MON4D3/LuaSnip',
-          build = (function()
-            if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-              return
+    config = function()
+      local cmp = require 'cmp'
+      local luasnip = require 'luasnip'
+      cmp.setup {
+        view = {
+          docs = {
+            auto_open = true,
+          },
+        },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
+        completion = { completeopt = 'menu,menuone,preview,noselect,popup' },
+        mapping = cmp.mapping.preset.insert {
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-b>'] = function()
+            if cmp.visible_docs() then
+              cmp.scroll_docs(-4)
+            else
+              cmp.open_docs()
             end
-            return 'make install_jsregexp'
-          end)(),
-          dependencies = {
-            {
-              'rafamadriz/friendly-snippets',
-              config = function()
-                require('luasnip.loaders.from_vscode').lazy_load()
-                require('luasnip.loaders.from_lua').load({ paths = "~/.config/nvim/lua/snippets/" })
-              end,
-            },
-          },
+          end,
+          ['<C-f>'] = function()
+            if cmp.visible_docs() then
+              cmp.scroll_docs(4)
+            else
+              cmp.open_docs()
+            end
+          end,
+          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm {},
+          ['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          ['<C-Space>'] = function()
+            if not cmp.visible() then
+              cmp.complete()
+            else
+              cmp.close()
+              cmp.close_docs()
+            end
+          end,
+          ['<C-l>'] = cmp.mapping(function()
+            if luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            end
+          end, { 'i', 's' }),
+          ['<C-h>'] = cmp.mapping(function()
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            end
+          end, { 'i', 's' }),
         },
-        'saadparwaiz1/cmp_luasnip',
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-path',
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'path' },
+          { name = 'luasnip' },
+          { name = 'buffer' },
+        },
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        formatting = {
+          -- format = require("nvim-highlight-colors").format
+        },
+      }
+    end,
+  },
+  {
+    "jackMort/ChatGPT.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      {
+        "folke/trouble.nvim",
+        config = true
       },
-      config = function()
-        local cmp = require 'cmp'
-        local luasnip = require 'luasnip'
-        cmp.setup {
-          view = {
-            docs = {
-              auto_open = true,
-            },
-          },
-          window = {
-            completion = cmp.config.window.bordered(),
-            documentation = cmp.config.window.bordered(),
-          },
-          completion = { completeopt = 'menu,menuone,preview,noselect,popup' },
-          mapping = cmp.mapping.preset.insert {
-            ['<C-n>'] = cmp.mapping.select_next_item(),
-            ['<C-p>'] = cmp.mapping.select_prev_item(),
-            ['<C-b>'] = function()
-              if cmp.visible_docs() then
-                cmp.scroll_docs(-4)
-              else
-                cmp.open_docs()
-              end
-            end,
-            ['<C-f>'] = function()
-              if cmp.visible_docs() then
-                cmp.scroll_docs(4)
-              else
-                cmp.open_docs()
-              end
-            end,
-            ['<C-y>'] = cmp.mapping.confirm { select = true },
-            ['<CR>'] = cmp.mapping.confirm {},
-            ['<Tab>'] = cmp.mapping.select_next_item(),
-            ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-            ['<C-Space>'] = function()
-              if not cmp.visible() then
-                cmp.complete()
-              else
-                cmp.close()
-                cmp.close_docs()
-              end
-            end,
-            ['<C-l>'] = cmp.mapping(function()
-              if luasnip.expand_or_locally_jumpable() then
-                luasnip.expand_or_jump()
-              end
-            end, { 'i', 's' }),
-            ['<C-h>'] = cmp.mapping(function()
-              if luasnip.locally_jumpable(-1) then
-                luasnip.jump(-1)
-              end
-            end, { 'i', 's' }),
-          },
-          sources = {
-            { name = 'nvim_lsp' },
-            { name = 'path' },
-            { name = 'luasnip' },
-            { name = 'buffer' },
-          },
-          snippet = {
-            expand = function(args)
-              luasnip.lsp_expand(args.body)
-            end,
-          },
-          formatting = {
-            -- format = require("nvim-highlight-colors").format
-          },
-        }
-      end,
+      "nvim-telescope/telescope.nvim"
     },
-    {
-      "jackMort/ChatGPT.nvim",
-      event = "VeryLazy",
-      dependencies = {
-        "MunifTanjim/nui.nvim",
-        "nvim-lua/plenary.nvim",
-        {
-          "folke/trouble.nvim",
-          config = true
-        },
-        "nvim-telescope/telescope.nvim"
-      },
-      config = function()
-        require("chatgpt").setup({
-          openai_params = {
-            frequency_penalty = 0,
-            presence_penalty = 0,
-            max_tokens = 4095,
-            temperature = 0.2,
-            top_p = 0.1,
-            n = 1,
-          }
-        })
-        local map = function(modes, key, cmd, descrp)
-          vim.keymap.set(modes, "<leader>c" .. key, cmd, { desc = "GPT: " .. descrp })
-        end
-
-        map({ "n", "v" }, 'c', "<cmd>ChatGPT<CR>", "ChatGPT")
-        map({ "n", "v" }, 'e', "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction")
-        map({ "n", "v" }, 'g', "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction")
-        map({ "n", "v" }, 't', "<cmd>ChatGPTRun translate<CR>", "Translate")
-        map({ "n", "v" }, 'd', "<cmd>ChatGPTRun docstring<CR>", "Docstring")
-        map({ "n", "v" }, 'o', "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code")
-        map({ "n", "v" }, 'f', "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs")
-        map({ "n", "v" }, 'r', "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit")
-        map({ "n", "v" }, 'l', "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis")
-        map({ "n", "v" }, 'h', "<cmd>ChatGPTRun explain_code<CR>", "Code Explaination")
+    config = function()
+      require("chatgpt").setup({
+        openai_params = {
+          frequency_penalty = 0,
+          presence_penalty = 0,
+          max_tokens = 4095,
+          temperature = 0.2,
+          top_p = 0.1,
+          n = 1,
+        }
+      })
+      local map = function(modes, key, cmd, descrp)
+        vim.keymap.set(modes, "<leader>c" .. key, cmd, { desc = "GPT: " .. descrp })
       end
-    }
+
+      map({ "n", "v" }, 'c', "<cmd>ChatGPT<CR>", "ChatGPT")
+      map({ "n", "v" }, 'e', "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction")
+      map({ "n", "v" }, 'g', "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction")
+      map({ "n", "v" }, 't', "<cmd>ChatGPTRun translate<CR>", "Translate")
+      map({ "n", "v" }, 'd', "<cmd>ChatGPTRun docstring<CR>", "Docstring")
+      map({ "n", "v" }, 'o', "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code")
+      map({ "n", "v" }, 'f', "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs")
+      map({ "n", "v" }, 'r', "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit")
+      map({ "n", "v" }, 'l', "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis")
+      map({ "n", "v" }, 'h', "<cmd>ChatGPTRun explain_code<CR>", "Code Explaination")
+    end
   },
   {
     'akinsho/flutter-tools.nvim',
@@ -276,7 +283,7 @@ require('lazy').setup({
       }
     end,
   }
-)
+})
 
 -- require('lazy').setup({
 --     {
@@ -869,7 +876,6 @@ require('lazy').setup({
 --   }
 -- )
 
-require('mappings')
 require('autocommands')
 require('terminal')
 require('dash')

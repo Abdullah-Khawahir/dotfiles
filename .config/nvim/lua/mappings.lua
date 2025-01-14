@@ -12,6 +12,7 @@ end
 
 nmap('<Esc>', '<cmd>nohlsearch<CR>')
 nmap('<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+nmap('<leader>f', 'gg=G<C-o>', { silent = true, desc = 'format buffer' })
 
 -- save changes / write buffer
 nmap('<C-s>', "<cmd>:w<CR>", { silent = true, desc = 'Show diagnostic [E]rror messages' })
@@ -20,9 +21,9 @@ nmap('[b', ":bp<CR>", { desc = 'previous buffer' })
 
 nmap('ZD', ":bd<CR>", { desc = 'delete buffer' })
 
-imap('<C-s>', "<cmd>:w<CR>a", { silent = true, desc = 'Show diagnostic [E]rror messages' })
-nmap('<C-S-s>', ":wa<CR>", { desc = 'Show diagnostic [E]rror messages' })
-imap('<C-S-s>', "<Esc>:wa<CR>a", { desc = 'Show diagnostic [E]rror messages' })
+imap('<C-s>', "<cmd>:w<CR>", { silent = true, desc = 'writes current buffer' })
+nmap('<C-S-s>', ":wa<CR>", { desc = 'writes all open buffers' })
+imap('<C-S-s>', "<Esc>:wa<CR>a", { desc = 'writes all open buffers' })
 
 nmap('<leader><leader>', ":b ", { desc = 'go to buffer ' })
 
@@ -103,6 +104,8 @@ nmap('<C-right>', '<C-w><', { desc = 'resize right' })
 nmap('<C-down>', '<C-w>-', { desc = 'resize down' })
 nmap('<C-up>', '<C-w>+', { desc = 'resize up' })
 
+
+nmap('<C-w><c-t>', ':term<CR>', { desc = 'open a term window' })
 -- for going one visual line down and up in wrap mode
 -- tabs
 nmap('<Tab>', "gt")
@@ -134,16 +137,26 @@ vmap("s{", "di{<C-r>\"}", { desc = "autoclosing" })
 vmap("s<", "di<<C-r>\">", { desc = "autoclosing" })
 
 nmap('<leader>pe', vim.cmd.Ntree, { desc = 'opens [E]xplorer' })
+nmap('<leader>pE', ':Ex <C-r>=expand(\'%:h\')<CR><CR>', { desc = 'opens [E]xplorer' })
 nmap('<leader>pv', '<cmd>Vex!<CR>', { desc = 'opens [V]ertical Explorer' })
 
 -- search and find mappings
 nmap('<leader>po', ':args **/*', { desc = '[O]pen files using glob' })
-nmap('<leader>pt', function()
+
+nmap('<leader>t', function()
     vim.cmd(":enew")
     vim.cmd(":%!tree --gitignore -t -r")
     vim.cmd(":setlocal nomodifiable")
     vim.cmd(":set buftype=nofile")
 end, { desc = '[O]pen project [t]ree' })
+
+nmap('<leader>T', function()
+    vim.cmd(":enew")
+    vim.cmd(":!tree " .. vim.fn.expand('%:p:h') .. " --gitignore -t -r")
+    vim.cmd(":setlocal nomodifiable")
+    vim.cmd(":setlocal buftype=nofile")
+end, { desc = '[O]pen project [t]ree current dir' })
+
 nmap('<leader>sf', ':args **/*', { desc = 'Open [f]iles using glob' })
 nmap('<leader>sn', ':args ~/.config/nvim/**/*', { desc = 'Open co[n]fig files using glob' })
 -- nmap('<leader>sn', ':args ~/AppData/Local/nvim/**/*', { desc = 'Open co[n]fig files using glob' })
