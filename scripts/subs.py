@@ -79,7 +79,7 @@ def fetch_subtitles(user_input):
     """
     fetches the movie/show subtitles pages by search name
     """
-    response_json = requests.get(search_url(user_input),timeout=30).json()
+    response_json = requests.get(search_url(user_input),timeout=10).json()
     if "results" not in response_json or not response_json["results"]:
         print("No results found.")
         return []
@@ -116,7 +116,7 @@ def download_subs(url):
     """
     download a file from the provided url and save it in CWD
     """
-    file_stream= requests.get(url, stream=True,timeout=30)
+    file_stream= requests.get(url, stream=True,timeout=10)
     if file_stream.status_code == 200:
         filename =file_stream.headers['content-disposition'].split("=")[-1]
         with open(filename, 'wb') as file:
@@ -169,7 +169,7 @@ def main():
                 print(f'{i} - {link.split("/")[-1]}')
 
             season_choice = seasons_links[int(input("Select the season > "))] + f'/{LANG}'
-            season_page = requests.get(by_uri(season_choice ),timeout=30).text
+            season_page = requests.get(by_uri(season_choice ),timeout=10).text
             table_praser = TableParser()
             table_praser.feed(season_page)
             print_table(table_praser.table_data)
