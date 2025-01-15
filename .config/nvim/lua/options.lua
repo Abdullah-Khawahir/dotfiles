@@ -26,7 +26,7 @@ vim.opt.smartcase      = true
 vim.opt.wildignorecase = true
 vim.opt.signcolumn     = 'yes'
 vim.opt.updatetime     = 100
-vim.opt.timeoutlen     = 500
+vim.opt.timeoutlen     = 1000
 vim.opt.splitright     = true
 vim.opt.splitbelow     = true
 vim.opt.list           = true
@@ -62,4 +62,4 @@ vim.api.nvim_create_autocmd("FileType", {
 --  dotnet
 vim.g.dotnet_errors_only = true
 -- flutter
--- vim.g.dart_sdk_path = "/path/to/flutter/bin/cache/dart-sdk"
+vim.g.dart_sdk_path = "~/development/flutter/"

@@ -3,6 +3,12 @@
 ## Mod Key
 set $mod Mod1
 
+# Layout
+workspace_layout tabbed
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
+
 ## Font Settings
 font pango:DejaVu Sans Mono 8
 
@@ -38,7 +44,8 @@ bindsym $mod+d exec --no-startup-id dmenu_run
 bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
 bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort
 bindsym Mod4+v exec --no-startup-id "clipmenu"
-bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs -I{} xdotool type  --clearmodifiers "{}"
+bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs | xclip -selection clipboard
+bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history
 bindsym Mod4+period exec --no-startup-id rofimoji
 
 ## Focus Movement
@@ -115,6 +122,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 ## Resize Mode
+bindsym $mod+r mode "resize"
 mode "resize" {
     bindsym l resize shrink width 1 px or 1 ppt
     bindsym j resize grow height 1 px or 1 ppt
@@ -128,7 +136,14 @@ mode "resize" {
     bindsym Escape mode "default"
     bindsym $mod+r mode "default"
 }
-bindsym $mod+r mode "resize"
+bindsym $mod+Ctrl+Shift+l resize shrink width 1 px or 1 ppt
+bindsym $mod+Ctrl+Shift+j resize grow height 1 px or 1 ppt
+bindsym $mod+Ctrl+Shift+k resize shrink height 1 px or 1 ppt
+bindsym $mod+Ctrl+Shift+h resize grow width 1 px or 1 ppt
+bindsym $mod+Ctrl+Shift+Left resize shrink width 1 px or 1 ppt
+bindsym $mod+Ctrl+Shift+Down resize grow height 1 px or 1 ppt
+bindsym $mod+Ctrl+Shift+Up resize shrink height 1 px or 1 ppt
+bindsym $mod+Ctrl+Shift+Right resize grow width 1 px or 1 ppt
 
 ## Passthrough Mode
 bindsym $mod+Menu mode "Passthrough"
