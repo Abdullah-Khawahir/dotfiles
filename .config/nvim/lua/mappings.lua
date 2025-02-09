@@ -12,7 +12,7 @@ end
 
 nmap('<Esc>', '<cmd>nohlsearch<CR>')
 nmap('<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-nmap('<leader>f', 'gg=G<C-o>', { silent = true, desc = 'format buffer' })
+-- nmap('<leader>f', 'gg=G<C-o>', { silent = true, desc = 'format buffer' })
 
 -- save changes / write buffer
 nmap('<C-s>', "<cmd>:w<CR>", { silent = true, desc = 'Show diagnostic [E]rror messages' })
@@ -105,7 +105,7 @@ nmap('<C-down>', '<C-w>-', { desc = 'resize down' })
 nmap('<C-up>', '<C-w>+', { desc = 'resize up' })
 
 
-nmap('<C-w><c-t>', ':term<CR>', { desc = 'open a term window' })
+nmap('<C-w><C-t>', ':term<CR>', { desc = 'open a term window' })
 -- for going one visual line down and up in wrap mode
 -- tabs
 nmap('<Tab>', "gt")
@@ -148,11 +148,12 @@ nmap('<leader>t', function()
     vim.cmd(":%!tree --gitignore -t -r")
     vim.cmd(":setlocal nomodifiable")
     vim.cmd(":set buftype=nofile")
+
 end, { desc = '[O]pen project [t]ree' })
 
 nmap('<leader>T', function()
     vim.cmd(":enew")
-    vim.cmd(":!tree " .. vim.fn.expand('%:p:h') .. " --gitignore -t -r")
+    vim.cmd(":%!tree " .. vim.fn.expand('%:p:h') .. " --gitignore -t -r")
     vim.cmd(":setlocal nomodifiable")
     vim.cmd(":setlocal buftype=nofile")
 end, { desc = '[O]pen project [t]ree current dir' })

@@ -59,6 +59,7 @@ ripgrep
 rofi
 rofi-calc
 rofimoji
+scrot
 sed
 sqlite
 stow
@@ -66,6 +67,7 @@ strace
 sudo
 system-config-printer
 systemd
+tesseract
 tree
 ttf-dejavu-nerd
 ttf-jetbrains-mono-nerd
@@ -80,4 +82,3 @@ xclip
 xf86-input-libinput
 yay
 zsh
-scrot

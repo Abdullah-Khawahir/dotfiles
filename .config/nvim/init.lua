@@ -37,10 +37,11 @@ require('lazy').setup({
     event = { 'BufRead', 'BufNewFile' }, -- Load only when reading or creating a file
   },
   {
-    'm4xshen/autoclose.nvim',
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
     config = function()
-      require("autoclose").setup()
-    end
+      require("nvim-autopairs").setup {}
+    end,
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -87,7 +88,7 @@ require('lazy').setup({
       })
       local servers = {
         -- clangd = {}
-        gopls = {},
+        -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         lua_ls = {
@@ -116,7 +117,11 @@ require('lazy').setup({
           end,
         },
       }
-      -- require("lspconfig").dartls.setup {}
+      local lspconfig = require('lspconfig')
+      lspconfig.pyright.setup({
+        root_dir = lspconfig.util.root_pattern(
+          '.git', 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt')
+      })
     end,
   },
   { -- Autocompletion
@@ -232,6 +237,7 @@ require('lazy').setup({
     config = function()
       require("chatgpt").setup({
         openai_params = {
+          model = "gpt-4-1106-preview",
           frequency_penalty = 0,
           presence_penalty = 0,
           max_tokens = 4095,

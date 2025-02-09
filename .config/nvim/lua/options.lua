@@ -40,6 +40,7 @@ vim.opt.linebreak      = true
 -- vim.opt.path           = vim.opt.path + '**'
 -- vim.opt.path           = vim.opt.path - 'node_modules/**'
 vim.cmd("set path+=**")
+vim.cmd("set dictionary=/usr/share/dict/cracklib-small")
 
 vim.cmd("packadd cfilter")
 

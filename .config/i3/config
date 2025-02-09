@@ -30,8 +30,11 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ to
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
 ## Screenshot Bindings
-bindsym $mod+Shift+s exec "scrot - | xclip -selection clipboard -target image/png"
-bindsym $mod+Shift+z exec "scrot -l width=2 -s - | xclip -selection clipboard -target image/png"
+bindsym $mod+Shift+s exec "scrot -F ~/ScreenShots/%Y-%m-%d_%l:%M:%S.png  -e 'cat $f'| xclip -selection clipboard -target image/png"
+bindsym $mod+Shift+z exec "scrot -F ~/ScreenShots/%Y-%m-%d_%l:%M:%S.png -l width=2 -s  -e 'cat $f' |  xclip -selection clipboard -target image/png"
+
+# Extract Text to Clipboard
+bindsym $mod+Shift+c exec "scrot -s -o -q 100 /tmp/scrot-tesseract.png && tesseract -l $(tesseract --list-langs | sed 1d  | sort | tac | dmenu) /tmp/scrot-tesseract.png - | xclip -selection clipboard -rmlastnl"
 
 ## Floating Windows
 floating_modifier $mod
@@ -44,9 +47,10 @@ bindsym $mod+d exec --no-startup-id dmenu_run
 bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
 bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort
 bindsym Mod4+v exec --no-startup-id "clipmenu"
-bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs | xclip -selection clipboard
+bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs | xclip -selection clipboard -r
 bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history
 bindsym Mod4+period exec --no-startup-id rofimoji
+bindsym $mod+Shift+n exec "ls -1 -t ~/Notes | dmenu -i > /tmp/notefile; [ -s /tmp/notefile ] && alacritty -e zsh -lic 'nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
 
 ## Focus Movement
 bindsym $mod+j focus down
@@ -69,8 +73,8 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 ## Layout Management
-bindsym $mod+x split h
-bindsym $mod+v split v
+bindsym $mod+x split v
+bindsym $mod+v split h
 bindsym $mod+f fullscreen toggle
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
@@ -117,9 +121,9 @@ bindsym $mod+Shift+9 move container to workspace number $ws9 ; workspace number 
 bindsym $mod+Shift+0 move container to workspace number $ws10 ; workspace number $ws10
 
 ## Reload, Restart, Exit i3
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+r restart
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+F5 reload
+bindsym $mod+Shift+F5 restart
+bindsym $mod+Shift+F4 exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 ## Resize Mode
 bindsym $mod+r mode "resize"
