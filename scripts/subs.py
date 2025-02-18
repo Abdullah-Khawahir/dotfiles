@@ -8,6 +8,7 @@ import os
 import re
 import requests
 import urllib.parse
+from bs4 import BeautifulSoup
 class HyperRefParser(HTMLParser):
     """
     Parser for extracting the hrefs from a tages like "<a href ..."
@@ -20,40 +21,21 @@ class HyperRefParser(HTMLParser):
             for attr in attrs :
                 if attr[0] == 'href':
                     self.links.append(attr[1])
-class TableParser(HTMLParser):
+class TableParser():
     """
-    Parses all the tables from an html to table_data as List of Lists
+    Extracts filename and download link from li elements.
     """
     def __init__(self):
         super().__init__()
-        self.in_table = False
-        self.in_row = False
-        self.in_cell = False
-        self.current_row = []
-        self.table_data = []
-
-    def handle_starttag(self, tag, attrs):
-        if tag == 'table':
-            self.in_table = True
-        elif tag == 'tr' and self.in_table:
-            self.in_row = True
-            self.current_row = []
-        elif tag == 'td' and self.in_row:
-            self.in_cell = True
-
-    def handle_endtag(self, tag):
-        if tag == 'table':
-            self.in_table = False
-        elif tag == 'tr':
-            self.in_row = False
-            if self.current_row:
-                self.table_data.append(self.current_row)
-        elif tag == 'td':
-            self.in_cell = False
-
-    def handle_data(self, data):
-        if self.in_cell:
-            self.current_row.append(data+'\n')
+    def feed(self,html):
+        bs = BeautifulSoup(html,'html.parser')
+        titles = [e.text for e in bs.select('li div a h4')] 
+        links =  [e['href'] for e in bs.select('li div a') if 'https://dl.subdl.com/subtitle' in e['href']]
+        self.results = [{'title':t, 'link':l} for t,l  in zip(titles,links)]
+    def print(self):
+        current_dir = [os.path.splitext(file)[0] for file in os.listdir()]
+        for i , res in enumerate(self.results):
+            print(f"{i:>2} {'*' if res['title'] in current_dir else ' '} {res['title']}")
 
 LANG = 'arabic'
 
@@ -61,7 +43,7 @@ def search_url(name):
     """
     build a full url for by a search name
     """
-    return f"https://api.subdl.net/auto?query={urllib.parse.quote(name)}"
+    return f"https://api3.subdl.com/auto?query={urllib.parse.quote(name)}"
 
 def subs_link(link):
     """
@@ -106,6 +88,7 @@ def print_table(table_data):
     """
     prints a table which is created by TableParser class
     """
+    print(table_data)
     for i, row in enumerate(table_data):
         print(f'{i}\n', end='')
         for col in row:
@@ -155,7 +138,7 @@ def main():
             parser = TableParser()
             parser.feed(sub_page)
             print()
-            print_table(parser.table_data)
+            parser.print()
 
             download_urls =re.findall(r"https://dl.subdl.com/subtitle/\d+-\d+", sub_page)
             download_subs(download_urls[int(input("Select number > "))])
@@ -172,7 +155,7 @@ def main():
             season_page = requests.get(by_uri(season_choice ),timeout=10).text
             table_praser = TableParser()
             table_praser.feed(season_page)
-            print_table(table_praser.table_data)
+            table_praser.print()
             href_parser = HyperRefParser()
             href_parser.feed(season_page)
             subs_links = list(dict.fromkeys([l for l in href_parser.links if '/s/info/' in l]))

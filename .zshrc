@@ -4,12 +4,20 @@ alias zz='cd "$(fzf --walker=dir --preview "ls -lh --color=always {}")"'
 alias z="fzf  --walker=file --multi --preview='bat {} --style=numbers,changes'"
 alias d="dotnet"
 alias yay="yay --sudoloop"
+alias x="xclip -r"
 
 # Helper Functions
 vcurl() {
+    curl -s -X GET $1 | nvim -
+}
+
+jcurl() {
     curl -s -X GET $1 | jq | nvim - -c 'set ft=json'
 }
 
+hcurl() {
+    curl -s -X GET $1 | nvim - -c 'set ft=html' 
+}
 pr() {
     fzfcmd() {
         fzf --height 33 --layout=reverse --select-1 --exit-0
@@ -73,6 +81,7 @@ export ANDROID_HOME=~/Android/Sdk/
 export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
 export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"
 export OPENAI_API_KEY=$(cat ~/.open_ai_key)
+export DEEPSEEK_API_KEY=$(cat ~/.deepseek_api_key)
 export PATH=$PATH:~/development/flutter/bin/
 export PATH=$PATH:~/local/templ/
 export PATH=$PATH:~/scripts/
@@ -86,3 +95,4 @@ source ~/.zsh_local_config.sh
 export GPG_TTY=$(tty)
 
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
+source /usr/share/nvm/init-nvm.sh

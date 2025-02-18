@@ -17,12 +17,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         map('<leader>ws', vim.lsp.buf.workspace_symbol, '[W]orkspace [S]ymbols')
         map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
         map('<leader>f', function()
-            vim.lsp.buf.format({
-                async = true,
-                filter = function(_client)
-                    return _client.supports_method('textDocument/formatting')
-                end,
-            })
+            vim.lsp.buf.format()
         end, '[F]ormat Buffer')
         map('<leader>H', vim.lsp.buf.typehierarchy, 'Type [H]ierarchy')
         map('<leader>wa', vim.lsp.buf.add_workspace_folder, '[A]dd Workspace folder')

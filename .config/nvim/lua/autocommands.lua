@@ -107,10 +107,8 @@ vim.api.nvim_create_autocmd('fileType', { -- python
         local run_command = "python3 %"
         local compiler = "pylint"
         set_keymap(run_command, compiler)
-        vim.api.nvim_set_keymap(
-            'n',
-            '<leader>f',
-            ':!autopep8 --in-place %<CR>:edit!<CR>',
-            { noremap = true, silent = true })
+        vim.cmd([[
+        setlocal formatprg=black\ -q\ -
+        ]])
     end
 })
