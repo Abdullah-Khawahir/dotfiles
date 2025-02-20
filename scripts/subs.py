@@ -101,7 +101,8 @@ def download_subs(url):
     """
     file_stream= requests.get(url, stream=True,timeout=10)
     if file_stream.status_code == 200:
-        filename =file_stream.headers['content-disposition'].split("=")[-1]
+        filename =file_stream.headers['content-disposition'].split("=")[-1].replace("UTF-8\'\'", "")
+        filename = urllib.parse.unquote(filename)
         with open(filename, 'wb') as file:
             for chunk in file_stream.iter_content(chunk_size=8192):
                 file.write(chunk)
