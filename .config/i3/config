@@ -30,8 +30,8 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ to
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
 ## Screenshot Bindings
-bindsym $mod+Shift+s exec "scrot -F ~/ScreenShots/%Y-%m-%d_%l:%M:%S.png  -e 'cat $f'| xclip -selection clipboard -target image/png"
-bindsym $mod+Shift+z exec "scrot -F ~/ScreenShots/%Y-%m-%d_%l:%M:%S.png -l width=2 -s  -e 'cat $f' |  xclip -selection clipboard -target image/png"
+bindsym $mod+Shift+s exec "scrot -F ~/ScreenShots/%Y-%m-%d_%H:%M:%S.png  -e 'cat $f'| xclip -selection clipboard -target image/png"
+bindsym $mod+Shift+z exec "scrot -F ~/ScreenShots/%Y-%m-%d_%H:%M:%S.png -l width=2 -s  -e 'cat $f' |  xclip -selection clipboard -target image/png"
 
 # Extract Text to Clipboard
 bindsym $mod+Shift+c exec "scrot -s -o -q 100 /tmp/scrot-tesseract.png && tesseract -l $(tesseract --list-langs | sed 1d  | sort | tac | dmenu) /tmp/scrot-tesseract.png - | xclip -selection clipboard -rmlastnl"
@@ -51,7 +51,7 @@ bindsym Mod4+v exec --no-startup-id "clipmenu"
 bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs | xclip -selection clipboard -r
 bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history
 bindsym Mod4+period exec --no-startup-id rofimoji
-bindsym $mod+Shift+n exec "ls -1 -t ~/Notes | dmenu -i > /tmp/notefile; [ -s /tmp/notefile ] && alacritty -e zsh -lic 'nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
+bindsym $mod+Shift+n exec "ls -1 -t ~/Notes | dmenu -i > /tmp/notefile; [ -s /tmp/notefile ] && alacritty -e zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
 
 ## Google The currrnt text in clipboard
 bindsym $mod+Shift+g exec xdg-open "https://www.google.com/search?q=$(xclip -o -selection clipboard | sed 's/ /+/g')"
@@ -179,3 +179,4 @@ bar {
 
 ## Window Rules
 for_window [class="zoom"] move container to workspace $ws5
+# for_window [class=".*"] floating disable
