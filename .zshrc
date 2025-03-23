@@ -7,6 +7,10 @@ alias yay="yay --sudoloop"
 alias x="xclip -r"
 
 # Helper Functions
+
+vman(){
+    man $1 | nvim - -c 'set ft=man'
+}
 vcurl() {
     curl -s -X GET $1 | nvim -
 }
@@ -60,14 +64,14 @@ md_to_pdf() {
 # ZHS Config
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
-plugins=(git node)
+plugins=(git node )
 source $ZSH/oh-my-zsh.sh
 zstyle ':omz:update' mode disabled  # disable automatic updates
 
 
 # PALTFORM RELATED
 export LANG=en_US.UTF-8
-export VISUAL='vim'
+export VISUAL='nvim'
 if [[ -n $SSH_CONNECTION ]]; then
     export EDITOR='vim'
 else
@@ -96,3 +100,11 @@ export GPG_TTY=$(tty)
 
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
 source /usr/share/nvm/init-nvm.sh
+
+# pnpm
+export PNPM_HOME="/home/abtuly/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

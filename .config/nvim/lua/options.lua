@@ -36,6 +36,8 @@ vim.opt.cursorline     = true
 vim.opt.scrolloff      = 10
 vim.opt.hlsearch       = true
 vim.opt.linebreak      = true
+vim.opt.laststatus     = 3
+vim.opt.modeline     = false
 
 -- vim.opt.path           = vim.opt.path + '**'
 -- vim.opt.path           = vim.opt.path - 'node_modules/**'
@@ -45,19 +47,25 @@ vim.cmd("set dictionary=/usr/share/dict/cracklib-small")
 vim.cmd("packadd cfilter")
 
 --netrw
-vim.g.netrw_banner          = 1
+vim.g.netrw_banner          = 0
 vim.g.netrw_fastbrowse      = 0
 vim.g.netrw_keepdir         = 1
+-- vim.g.netrw_liststyle       = 3
 vim.g.netrw_localcopydircmd = 'cp -r'
-vim.g.netrw_winsize         = 30
 vim.g.netrw_preview         = 1
 vim.g.netrw_winsize         = 30
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "netrw",
 	callback = function()
-		vim.bo.bufhidden = "wipe"
+		-- vim.bo.bufhidden = "wipe"
 	end,
 })
+vim.g.netrw_list_hide = (vim.g.netrw_list_hide or '') .. table.concat({
+	'.*\\.swp$',
+	'node_modules',
+	'__pycache__',
+	'.git'
+}, ',')
 
 -- compilers
 --  dotnet

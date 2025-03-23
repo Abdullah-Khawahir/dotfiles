@@ -72,7 +72,7 @@ def display_results(results):
     to print the results came from `fetch_subtitles`
     """
     for i, result in enumerate(results):
-        display_response = f"{i} - {result['type']}: {result['name']} ({result['year']})"
+        display_response = f"{i} - {result['type']}: {result['name']} ({result.get('year', 'N/A')})"
         print(display_response)
 
 def get_tv_episodes(results):

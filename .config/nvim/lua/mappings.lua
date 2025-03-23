@@ -143,24 +143,13 @@ nmap('<leader>pv', '<cmd>Vex!<CR>', { desc = 'opens [V]ertical Explorer' })
 -- search and find mappings
 nmap('<leader>po', ':args **/*', { desc = '[O]pen files using glob' })
 
-nmap('<leader>t', function()
-    vim.cmd(":enew")
-    vim.cmd(":%!tree --gitignore -t -r")
-    vim.cmd(":setlocal nomodifiable")
-    vim.cmd(":set buftype=nofile")
-
-end, { desc = '[O]pen project [t]ree' })
-
-nmap('<leader>T', function()
-    vim.cmd(":enew")
-    vim.cmd(":%!tree " .. vim.fn.expand('%:p:h') .. " --gitignore -t -r")
-    vim.cmd(":setlocal nomodifiable")
-    vim.cmd(":setlocal buftype=nofile")
-end, { desc = '[O]pen project [t]ree current dir' })
+nmap('<leader>t', ':Vex <CR>', { desc = '[O]pen project [t]ree' })
+nmap('<leader>T', ':Vex <C-r>=expand(\'%:h\')<CR><CR>', { desc = '[O]pen project [t]ree current dir' })
 
 nmap('<leader>sf', ':args **/*', { desc = 'Open [f]iles using glob' })
 nmap('<leader>sn', ':args ~/.config/nvim/**/*', { desc = 'Open co[n]fig files using glob' })
 -- nmap('<leader>sn', ':args ~/AppData/Local/nvim/**/*', { desc = 'Open co[n]fig files using glob' })
+nmap('<leader>sg', ':vim// ./**/* <left><left><left><left><left><left><left><left><left>', { desc = 'Open co[n]fig files using glob' })
 nmap('<leader>sh', ':help ', { desc = 'Open [h]elp' })
 
 nmap('<leader>sw', ":vim// **<Left><Left><Left><Left>",
@@ -187,7 +176,8 @@ vmap('<leader>rc', '\"sy:sno/<C-r>s//gc<Left><Left><Left>',
 
 nmap("<leader>waf", ":e <C-r>=expand('%:p:h')<CR>/", { desc = "Add [F]ile" })
 nmap("<leader>wad", ":!mkdir -p <C-r>=expand('%:p:h')<CR>/", { desc = "Add [D]irecory" })
-
+nmap("<leader>wcf", ":!cp % <C-r>=expand('%:p:h')<CR>/", { desc = "Copy File" })
+nmap("<leader>wmf", ":!mv % <C-r>=expand('%:p:h')<CR>/", { desc = "Move File" })
 
 -- toggle mappings
 IS_ARABIC = false
@@ -235,3 +225,4 @@ nmap('\\e', ':set modifiable!<CR>', { desc = 'toggle modifiable for to make buff
 
 vmap('K', ":m '<-2<CR>gv=gv")
 vmap('J', ":m '>+1<CR>gv=gv")
+nmap("gV", "`[v`]", {desc="select last pasted area"})

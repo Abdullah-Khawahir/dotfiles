@@ -76,27 +76,32 @@ def open_magnet_link(magnet_link: str):
     system_name = platform.system()
     try:
         if system_name == "Windows":
-            subprocess.run(
+            subprocess.Popen(
                 f"start {magnet_link}",
                 shell=True,
                 stdin=None,
                 stdout=None,
-                start_new_session=True,
+                stderr=None,
+                close_fds=True,
             )
         elif system_name == "Darwin":  # macOS
-            subprocess.run(
-                ["open", magnet_link], stdin=None, stdout=None, start_new_session=True
+            subprocess.Popen(
+                ["open", magnet_link],
+                stdin=None,
+                stdout=None,
+                stderr=None,
+                close_fds=True,
             )
         elif system_name == "Linux":
-            subprocess.run(
+            subprocess.Popen(
                 ["xdg-open", magnet_link],
                 stdin=None,
                 stderr=None,
                 stdout=None,
-                start_new_session=True,
+                close_fds=True,
             )
         else:
-            print(f"Unsupported OS: {system_name}")
+            print(magnet_link)
     except Exception as e:
         print(f"Error opening magnet link: {e}")
 
@@ -154,54 +159,62 @@ def main():
     parser = argparse.ArgumentParser(
         description="CLI tool to search movies and get torrents."
     )
-    subparsers = parser.add_subparsers(dest="target", help="target if movie or tv show")
+    subparsers = parser.add_subparsers(
+        dest="target", help="Specify the target: movie, tv show, or IMDb search"
+    )
 
     imdb = subparsers.add_parser(
-        "imdb", aliases=["i"], help="Search for a movie or movie in imdb"
+        "imdb", aliases=["i"], help="Search for a movie or show on IMDb"
     )
-    imdb.add_argument("title", type=str, help="Movie/Show Title or IMDb Code")
+    imdb.add_argument("title", type=str, help="Title or IMDb Code of the movie/show")
     imdb.add_argument(
         "-t",
         "--type",
         choices=["movie", "series", "episode"],
         type=str,
-        help="search target",
+        help="Specify the type of media to search for",
     )
-    imdb.add_argument("-y", "--year", type=str, help="Year of release.")
-    imdb.add_argument("-i", "--index", type=int, help="the displayed index")
+    imdb.add_argument("-y", "--year", type=str, help="Specify the year of release")
+    imdb.add_argument(
+        "-i", "--index", type=int, help="Specify the index of the result to display"
+    )
     imdb.add_argument(
         "-d",
         "--download",
         type=int,
-        help="download or print the magnit link if givien",
+        help="Download or print the magnet link if provided",
     )
 
     movie = subparsers.add_parser("movie", aliases=["m"], help="Search for a movie")
     movie.add_argument(
         "title",
         type=str,
-        help="Movie Title/IMDb Code, Actor Name/IMDb Code, Director Name/IMDb Code",
+        help="Title/IMDb Code, Actor Name/IMDb Code, or Director Name/IMDb Code",
     )
-    movie.add_argument("-y", "--year", type=str, help="Year of release.")
-    movie.add_argument("-i", "--index", type=int, help="the displayed index ")
+    movie.add_argument("-y", "--year", type=str, help="Specify the year of release")
+    movie.add_argument(
+        "-i", "--index", type=int, help="Specify the index of the result to display"
+    )
     movie.add_argument(
         "-d",
         "--download",
         type=int,
-        help="download or print the magnit link if givien",
+        help="Download or print the magnet link if provided",
     )
 
-    show = subparsers.add_parser("tv", aliases=["t"], help="Search for a tv show")
-    show.add_argument("title", type=str, help="Show Title/IMDb Code")
-    show.add_argument("-i", "--index", type=int, help="the displayed index")
+    show = subparsers.add_parser("tv", aliases=["t"], help="Search for a TV show")
+    show.add_argument("title", type=str, help="Title or IMDb Code of the show")
     show.add_argument(
-        "-p", "--page", type=int, default=1, help="Page number of results."
+        "-i", "--index", type=int, help="Specify the index of the result to display"
+    )
+    show.add_argument(
+        "-p", "--page", type=int, default=1, help="Specify the page number of results"
     )
     show.add_argument(
         "-d",
         "--download",
         type=int,
-        help="download or print the magnit link if givien",
+        help="Download or print the magnet link if provided",
     )
 
     args = parser.parse_args()
