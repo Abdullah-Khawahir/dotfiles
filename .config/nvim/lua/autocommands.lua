@@ -107,6 +107,10 @@ vim.api.nvim_create_autocmd('fileType', { -- python
         local run_command = "python3 %"
         local compiler = "pylint"
         set_keymap(run_command, compiler)
+        vim.api.nvim_buf_set_keymap(0, "n", "<leader>i", ':PyrightOrganizeImports<CR>',
+        { desc = "Organize Imports"})
+        vim.api.nvim_buf_set_keymap(0, "n", "<leader>f", ':!black -q %<CR>',
+        { desc = "format buffer"})
         vim.cmd([[
         setlocal formatprg=black\ -q\ -
         ]])

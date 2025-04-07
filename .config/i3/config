@@ -48,7 +48,7 @@ bindsym $mod+Return exec $term
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec --no-startup-id dmenu_run
 bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort | awk -F= '{ print $NF }' | xclip -rmlastnl
+bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort | awk -F= '{ print $NF }' | xclip -rmlastnl -selection clipboard
 bindsym Mod4+v exec --no-startup-id "clipmenu"
 bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs | xclip -selection clipboard -r
 bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history

@@ -12,15 +12,15 @@ vman(){
     man $1 | nvim - -c 'set ft=man'
 }
 vcurl() {
-    curl -s -X GET $1 | nvim -
+    curl  -s -X GET $1 ${@:2} | nvim -
 }
 
 jcurl() {
-    curl -s -X GET $1 | jq | nvim - -c 'set ft=json'
+    curl -s -X GET $1 ${@:2} | jq | nvim - -c 'set ft=json'
 }
 
 hcurl() {
-    curl -s -X GET $1 | nvim - -c 'set ft=html' 
+    curl -s -X GET $1 ${@:2} | nvim - -c 'set ft=html' 
 }
 pr() {
     fzfcmd() {

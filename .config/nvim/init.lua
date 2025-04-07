@@ -10,6 +10,27 @@ vim.opt.rtp:prepend(lazypath)
 require('mappings')
 require("lsp")
 require('lazy').setup({
+  require 'kickstart.plugins.debug', -- adds gitsigns recommend keymaps
+  {
+    "LunarVim/bigfile.nvim",
+    config = function()
+      -- default config
+      require("bigfile").setup {
+        filesize = 1,  -- size of the file in MiB, the plugin round file sizes to the closest MiB
+        pattern = { "*" }, -- autocmd pattern or function see <### Overriding the detection of big files>
+        features = {   -- features to disable
+          "indent_blankline",
+          "illuminate",
+          "lsp",
+          "treesitter",
+          "syntax",
+          "matchparen",
+          "vimopts",
+          "filetype",
+        },
+      }
+    end
+  },
   {
     'folke/tokyonight.nvim',
     event = 'VimEnter', -- Load colorscheme on VimEnter to improve startup time
@@ -18,6 +39,158 @@ require('lazy').setup({
       vim.cmd.colorscheme 'tokyonight-night'
       vim.cmd.hi 'Comment gui=none'
     end,
+  },
+  'vifm/vifm.vim',
+  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  'windwp/nvim-ts-autotag',
+  {
+    'github/copilot.vim',
+    config = function()
+      vim.cmd(':Copilot disable')
+      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+        expr = true,
+        replace_keycodes = false
+      })
+    end
+  },
+  {                     -- Fuzzy Finder (files, lsp, etc)
+    'nvim-telescope/telescope.nvim',
+    event = 'VeryLazy', -- or a specific command like 'Telescope'
+    branch = '0.1.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'make',
+        cond = function()
+          return vim.fn.executable 'make' == 1
+        end,
+      },
+      { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+    },
+    config = function()
+      local telescope = require('telescope')
+      local themes = require('telescope.themes')
+      local builtin = require('telescope.builtin')
+
+      telescope.setup {
+        -- defaults = themes.get_dropdown({
+        --   layout_config = {
+        --     preview_cutoff = 1, -- Preview should always show (unless previewer = false)
+        --
+        --     width = 100,
+        --     height =  15,
+        --   },
+        -- })
+      }
+
+      pcall(telescope.load_extension, 'fzf')
+      pcall(telescope.load_extension, 'ui-select')
+
+      local function nmap(key, cmd, opts)
+        vim.keymap.set('n', key, cmd, opts)
+      end
+
+      nmap('<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+      nmap('<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+      nmap('<leader>sf', function()
+        builtin.find_files {
+          -- path_display = { "smart" } ,
+
+          hidden = false }
+      end, { desc = '[S]earch [F]iles' })
+      nmap('<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      nmap('<leader>sw', function()
+        builtin.grep_string()
+      end, { desc = '[S]earch current [W]ord' })
+      nmap('<leader>sg', function()
+        builtin.live_grep()
+      end, { desc = '[S]earch by [G]rep' })
+      nmap('<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      nmap('<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      nmap('<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      nmap('<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      nmap('<leader>sc', builtin.git_status, { desc = 'Git [C]hanged' })
+
+      nmap('<leader>/', function()
+        builtin.current_buffer_fuzzy_find(themes.get_dropdown {
+          winblend = 10,
+          previewer = false,
+          width = 95
+        })
+      end, { desc = '[/] Fuzzily search in current buffer' })
+      nmap('<leader>s/', function()
+        builtin.live_grep {
+          grep_open_files = true,
+          prompt_title = 'Live Grep in Open Files',
+        }
+      end, { desc = '[S]earch [/] in Open Files' })
+      nmap('<leader>sn', function()
+        builtin.find_files { cwd = '~/dotfiles/.config/nvim/' }
+      end, { desc = '[S]earch [N]eovim files' })
+    end,
+  },
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    lazy = false,
+    version = '*', -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
+    opts = {
+      -- -- add any opts here
+      -- -- for example
+      -- show_key_hints = false,  -- Disable keymap hints,
+      provider = "openai",
+      -- openai = {
+      --   endpoint = "https://api.openai.com/v1",
+      --   model = "gpt-4o", -- your desired model (or use gpt-4o, etc.)
+      --   timeout = 30000,  -- timeout in milliseconds
+      --   temperature = 0,  -- adjust if needed
+      --   max_tokens = 4096,
+      --   -- reasoning_effort = "high"   -- only supported for "o" models
+      -- },
+    },
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    build = "make",
+    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      --- The below dependencies are optional,
+      "echasnovski/mini.pick",         -- for file_selector provider mini.pick
+      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+      "hrsh7th/nvim-cmp",              -- autocompletion for avante commands and mentions
+      "ibhagwan/fzf-lua",              -- for file_selector provider fzf
+      "nvim-tree/nvim-web-devicons",   -- or echasnovski/mini.icons
+      -- "zbirenbaum/copilot.lua",          -- for providers='copilot'
+      {
+        -- support for image pasting
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            -- use_absolute_path = true,
+          },
+        },
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
   },
   {
     'tpope/vim-fugitive',
@@ -52,6 +225,13 @@ require('lazy').setup({
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = { 'ruby' },
+        disable = function(lang, buf)
+          local max_filesize = 1024 * 1024 -- 1 MB
+          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          if ok and stats and stats.size > max_filesize then
+            return true
+          end
+        end,
       },
     },
     config = function(_, opts)
