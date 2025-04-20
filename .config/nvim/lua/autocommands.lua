@@ -8,6 +8,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 
 
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+    pattern = "*.cshtml",
+    callback = function()
+        vim.bo.filetype = "razor" -- or "html"
+    end,
+})
+vim.treesitter.language.register("html", "razor")
+
+vim.cmd('au BufRead *.razor setlocal filetype=razor')
+
 local function set_keymap(run_command, compiler, opt)
     opt = opt or {}
     local lua_run_command = ":lua OpenTerm('" .. run_command .. (opt.run_command_opt or '') .. "')<CR>"
@@ -53,12 +63,63 @@ end
 -- 	end,
 -- })
 
-vim.api.nvim_create_autocmd('fileType', { -- csharp
-    pattern = { 'cs' },
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'cs', 'razor', 'cshtml' },
     callback = function()
         local run_command = "dotnet run"
         local compiler = "dotnet"
         set_keymap(run_command, compiler)
+
+        vim.keymap.set("n", "<leader>o", function()
+            local current_file = vim.fn.expand("%:p")
+            local alt_file
+
+            if current_file:match("%.cshtml$") then
+                alt_file = current_file .. ".cs"
+            elseif current_file:match("%.cshtml%.cs$") then
+                alt_file = current_file:gsub("%.cshtml%.cs$", ".cshtml")
+            else
+                return
+            end
+
+            if vim.fn.filereadable(alt_file) == 1 then
+                vim.cmd("edit " .. alt_file)
+            else
+                vim.notify("Alternate file not found: " .. alt_file, vim.log.levels.WARN)
+            end
+        end, { desc = "Model/View Toggle", noremap = true, silent = true, buffer = true })
+
+        vim.api.nvim_create_user_command(
+            'RazorPage',
+            function(opts)
+                local args = vim.split(opts.args, " ")
+                local dir = args[1]
+                local name = args[2]
+                -- NOTE: this return the values as a list not text
+                local project_name = vim.fn.systemlist("ls -1 | grep '.csproj$' | cut -d '.' -f 1")[1]
+
+                if not dir or not name then
+                    print("Usage: :RazorPage <dir> <name>")
+                    return
+                end
+                local cmd = string.format(
+                    'dotnet new page -n %s -o %s --namespace %s.Pages',
+                    name,
+                    dir,
+                    project_name
+                )
+
+                local output = vim.fn.system(cmd)
+
+                print("Command executed:\n" .. cmd)
+                print("Output:\n" .. output)
+            end,
+            {
+                nargs = "+",
+                complete = "file",
+                desc = "Create a Razor Page with code-behind file"
+            }
+        )
     end
 })
 
@@ -108,9 +169,9 @@ vim.api.nvim_create_autocmd('fileType', { -- python
         local compiler = "pylint"
         set_keymap(run_command, compiler)
         vim.api.nvim_buf_set_keymap(0, "n", "<leader>i", ':PyrightOrganizeImports<CR>',
-        { desc = "Organize Imports"})
+            { desc = "Organize Imports" })
         vim.api.nvim_buf_set_keymap(0, "n", "<leader>f", ':!black -q %<CR>',
-        { desc = "format buffer"})
+            { desc = "format buffer" })
         vim.cmd([[
         setlocal formatprg=black\ -q\ -
         ]])

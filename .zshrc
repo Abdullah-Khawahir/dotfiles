@@ -4,7 +4,9 @@ alias zz='cd "$(fzf --walker=dir --preview "ls -lh --color=always {}")"'
 alias z="fzf  --walker=file --multi --preview='bat {} --style=numbers,changes'"
 alias d="dotnet"
 alias yay="yay --sudoloop"
-alias x="xclip -r"
+alias x="xclip -r -selection clipboard"
+alias tm="tmux "
+alias ta="tmux a"
 
 # Helper Functions
 

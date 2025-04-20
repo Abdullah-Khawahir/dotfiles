@@ -37,7 +37,26 @@ vim.opt.scrolloff      = 10
 vim.opt.hlsearch       = true
 vim.opt.linebreak      = true
 vim.opt.laststatus     = 3
-vim.opt.modeline     = false
+vim.opt.modeline       = false
+
+
+
+vim.diagnostic.config({
+	virtual_text = {
+		prefix = " ●",
+		spacing = 2,
+		severity = {
+			vim.diagnostic.severity.WARN, vim.diagnostic.severity.ERROR,
+		},
+	},
+	underline = {
+		severity = {
+			vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN,
+		},
+	},
+	signs = true,
+	update_in_insert = false,
+})
 
 -- vim.opt.path           = vim.opt.path + '**'
 -- vim.opt.path           = vim.opt.path - 'node_modules/**'

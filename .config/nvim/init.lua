@@ -12,13 +12,53 @@ require("lsp")
 require('lazy').setup({
   require 'kickstart.plugins.debug', -- adds gitsigns recommend keymaps
   {
+    "Jezda1337/nvim-html-css",
+    dependencies = { "hrsh7th/nvim-cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using nvim-cmp
+    -- dependencies = { "saghen/blink.cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using blink.cmp
+    opts = {
+      enable_on = { -- Example file types
+        "html",
+        "htmldjango",
+        "tsx",
+        "jsx",
+        "erb",
+        "svelte",
+        "vue",
+        "blade",
+        "php",
+        "templ",
+        "astro",
+      },
+      handlers = {
+        definition = {
+          bind = "gd"
+        },
+        hover = {
+          bind = "K",
+          wrap = true,
+          border = "none",
+          position = "cursor",
+        },
+      },
+      documentation = {
+        auto_show = true,
+      },
+      style_sheets = {
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.3/css/bulma.min.css",
+        "./index.css", -- `./` refers to the current working directory.
+        "wwwroot/**/*.css",
+      },
+    },
+  },
+  {
     "LunarVim/bigfile.nvim",
     config = function()
       -- default config
       require("bigfile").setup {
-        filesize = 1,  -- size of the file in MiB, the plugin round file sizes to the closest MiB
+        filesize = 1,      -- size of the file in MiB, the plugin round file sizes to the closest MiB
         pattern = { "*" }, -- autocmd pattern or function see <### Overriding the detection of big files>
-        features = {   -- features to disable
+        features = {       -- features to disable
           "indent_blankline",
           "illuminate",
           "lsp",
@@ -42,17 +82,25 @@ require('lazy').setup({
   },
   'vifm/vifm.vim',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  'windwp/nvim-ts-autotag',
   {
-    'github/copilot.vim',
-    config = function()
-      vim.cmd(':Copilot disable')
-      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false
-      })
-    end
+    'windwp/nvim-ts-autotag',
+    opts = {
+      aliases = {
+        ["cshtml"] = "html",
+        ["razor"] = "html"
+      }
+    },
   },
+  -- {
+  --   'github/copilot.vim',
+  --   config = function()
+  --     vim.cmd(':Copilot disable')
+  --     vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  --       expr = true,
+  --       replace_keycodes = false
+  --     })
+  --   end
+  -- },
   {                     -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VeryLazy', -- or a specific command like 'Telescope'
@@ -75,14 +123,19 @@ require('lazy').setup({
       local builtin = require('telescope.builtin')
 
       telescope.setup {
-        -- defaults = themes.get_dropdown({
-        --   layout_config = {
-        --     preview_cutoff = 1, -- Preview should always show (unless previewer = false)
-        --
-        --     width = 100,
-        --     height =  15,
-        --   },
-        -- })
+        defaults = {
+          file_ignore_patterns = {
+            'lib',
+            '.git',
+            'node_modules',
+            'bin',
+            'obj',
+            '%.png',
+            '%.jpg',
+            '%.jpg',
+            'Migrations'
+          },
+        }
       }
 
       pcall(telescope.load_extension, 'fzf')
@@ -137,6 +190,7 @@ require('lazy').setup({
     lazy = false,
     version = '*', -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
     opts = {
+      hints = { enabled = false },
       -- -- add any opts here
       -- -- for example
       -- show_key_hints = false,  -- Disable keymap hints,
@@ -267,10 +321,16 @@ require('lazy').setup({
         }
       })
       local servers = {
+        html = {},
         -- clangd = {}
         -- gopls = {},
         black = {},
         -- rust_analyzer = {},
+        -- omnisharp = {
+        --   enable_roslyn_analyzers = true,
+        --   organize_imports_on_format = true,
+        --   enable_import_completion = true,
+        -- },
         lua_ls = {
           settings = {
             Lua = {
@@ -281,7 +341,6 @@ require('lazy').setup({
           },
         },
       }
-      require('mason').setup()
 
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
