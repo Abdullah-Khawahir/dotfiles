@@ -31,9 +31,14 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+bindsym $mod+KP_Add exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym $mod+KP_Subtract exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym $mod+KP_Multiply exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym $mod+KP_Divide exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
 ## Screenshot Bindings
-bindsym $mod+Shift+s exec "scrot -F ~/ScreenShots/%Y-%m-%d_%H:%M:%S.png  -e 'cat $f' | xclip -selection clipboard -target image/png"
-bindsym $mod+Shift+z exec "scrot -F ~/ScreenShots/%Y-%m-%d_%H:%M:%S.png -l width=2 -s  -e 'cat $f' |  xclip -selection clipboard -target image/png"
+bindsym $mod+Shift+s exec "mkdir ~/ScreenShots/ -p ; scrot -F ~/ScreenShots/%Y-%m-%d_%H:%M:%S.png  -e 'cat $f' | xclip -selection clipboard -target image/png"
+bindsym $mod+Shift+z exec "mkdir ~/ScreenShots/ -p ; scrot -F ~/ScreenShots/%Y-%m-%d_%H:%M:%S.png -l width=2 -s  -e 'cat $f' |  xclip -selection clipboard -target image/png"
 
 # Extract Text to Clipboard
 bindsym $mod+Shift+c exec "scrot -s -o -q 100 /tmp/scrot-tesseract.png && tesseract -l $(tesseract --list-langs | sed 1d  | sort | tac | dmenu) /tmp/scrot-tesseract.png - | xclip -selection clipboard -rmlastnl"
@@ -63,7 +68,7 @@ bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history
 # repeat
 
 bindsym Mod4+period exec --no-startup-id rofimoji
-bindsym $mod+Shift+n exec "ls -1 -t ~/Notes | dmenu -i > /tmp/notefile; [ -s /tmp/notefile ] && gnome-terminal -- zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
+bindsym $mod+Shift+n exec "ls -1 -t ~/Notes | dmenu -i > /tmp/notefile; [ -s /tmp/notefile ] && $term -e zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
 bindsym $mod+Shift+Ctrl+n exec "echo -n '' | dmenu > /tmp/notefile; [ -s /tmp/notefile ] && $term -e zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
 
 ## Transcribe
