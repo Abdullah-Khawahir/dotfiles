@@ -68,8 +68,8 @@ bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history
 # repeat
 
 bindsym Mod4+period exec --no-startup-id rofimoji
-bindsym $mod+Shift+n exec "ls -1 -t ~/Notes | dmenu -i > /tmp/notefile; [ -s /tmp/notefile ] && $term -e zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
-bindsym $mod+Shift+Ctrl+n exec "echo -n '' | dmenu > /tmp/notefile; [ -s /tmp/notefile ] && $term -e zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
+bindsym $mod+Shift+n exec "mkdir ~/Notes/ -p ; ls -1 -t ~/Notes | dmenu -i > /tmp/notefile; [ -s /tmp/notefile ] && $term -e zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
+bindsym $mod+Shift+Ctrl+n exec "mkdir ~/Notes/ -p ; echo -n '' | dmenu > /tmp/notefile; [ -s /tmp/notefile ] && $term -e zsh -lic 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
 
 ## Transcribe
 bindsym $mod+Shift+T exec zsh -lic 'arecord -f cd -t wav /tmp/audio.wav & pid=$! && echo "Recording... (Press Enter to stop)" | dmenu -p "Recording" && kill $pid && python ~/scripts/transcribe.py /tmp/audio.wav | xclip -r && echo "Done" | dmenu'
