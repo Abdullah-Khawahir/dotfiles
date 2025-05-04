@@ -30,6 +30,39 @@ local function set_keymap(run_command, compiler, opt)
 end
 
 
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+    pattern = { "*.c", "*.h" },
+    callback = function()
+        local run_command = "make run"
+        local compiler = "gcc"
+        set_keymap(run_command, compiler)
+
+        vim.keymap.set("n", "<leader>o", function()
+            local ext1 = ".c"
+            local ext2 = ".h"
+            local current_file = vim.fn.expand("%:p")
+            local alt_file
+
+            if current_file:match(ext1 .. "$") then
+                alt_file = current_file:gsub(ext1 .. "$", ext2)
+            elseif current_file:match(ext2 .. "$") then
+                alt_file = current_file:gsub(ext2 .. "$", ext1)
+            else
+                return
+            end
+
+            if vim.fn.filereadable(alt_file) == 1 then
+                vim.cmd("edit " .. alt_file)
+            else
+                vim.notify("Alternate file not found: " .. alt_file, vim.log.levels.WARN)
+            end
+        end, { desc = "Model/View Toggle", noremap = true, silent = true, buffer = true })
+    end
+})
+
+
+
+
 
 -- vim.api.nvim_create_autocmd('FileType', {
 -- 	pattern = { 'lua' },

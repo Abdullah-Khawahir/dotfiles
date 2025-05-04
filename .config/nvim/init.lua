@@ -11,46 +11,44 @@ require('mappings')
 require("lsp")
 require('lazy').setup({
   require 'kickstart.plugins.debug', -- adds gitsigns recommend keymaps
-  {
-    "Jezda1337/nvim-html-css",
-    dependencies = { "hrsh7th/nvim-cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using nvim-cmp
-    -- dependencies = { "saghen/blink.cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using blink.cmp
-    opts = {
-      enable_on = { -- Example file types
-        "html",
-        "htmldjango",
-        "tsx",
-        "jsx",
-        "erb",
-        "svelte",
-        "vue",
-        "blade",
-        "php",
-        "templ",
-        "astro",
-      },
-      handlers = {
-        definition = {
-          bind = "gd"
-        },
-        hover = {
-          bind = "K",
-          wrap = true,
-          border = "none",
-          position = "cursor",
-        },
-      },
-      documentation = {
-        auto_show = true,
-      },
-      style_sheets = {
-        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
-        "https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.3/css/bulma.min.css",
-        "./index.css", -- `./` refers to the current working directory.
-        "wwwroot/**/*.css",
-      },
-    },
-  },
+  -- {
+  --   "Jezda1337/nvim-html-css",
+  --   dependencies = { "hrsh7th/nvim-cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using nvim-cmp
+  --   -- dependencies = { "saghen/blink.cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using blink.cmp
+  --   opts = {
+  --     enable_on = { -- Example file types
+  --       "html",
+  --       "htmldjango",
+  --       "tsx",
+  --       "jsx",
+  --       "erb",
+  --       "svelte",
+  --       "vue",
+  --       "blade",
+  --       "php",
+  --       "templ",
+  --       "astro",
+  --     },
+  --     handlers = {
+  --       definition = {
+  --         bind = "gd"
+  --       },
+  --       hover = {
+  --         bind = "K",
+  --         wrap = true,
+  --         border = "none",
+  --         position = "cursor",
+  --       },
+  --     },
+  --     documentation = {
+  --       auto_show = true,
+  --     },
+  --     style_sheets = {
+  --       "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
+  --       "https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.3/css/bulma.min.css",
+  --     },
+  --   },
+  -- },
   {
     "LunarVim/bigfile.nvim",
     config = function()
@@ -71,14 +69,24 @@ require('lazy').setup({
       }
     end
   },
+  -- {
+  --   'folke/tokyonight.nvim',
+  --   event = 'VimEnter', -- Load colorscheme on VimEnter to improve startup time
+  --   priority = 1000,    -- Make sure to load this before all the other start plugins.
+  --   init = function()
+  --     vim.cmd.colorscheme 'tokyonight-night'
+  --     vim.cmd.hi 'Comment gui=none'
+  --   end,
+  -- },
   {
-    'folke/tokyonight.nvim',
-    event = 'VimEnter', -- Load colorscheme on VimEnter to improve startup time
-    priority = 1000,    -- Make sure to load this before all the other start plugins.
-    init = function()
-      vim.cmd.colorscheme 'tokyonight-night'
+    "ellisonleao/gruvbox.nvim",
+    priority = 1000,
+    config = true,
+    opts = ...,
+    init = function ()
+      vim.cmd.colorscheme 'gruvbox'
       vim.cmd.hi 'Comment gui=none'
-    end,
+    end
   },
   'vifm/vifm.vim',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
@@ -125,11 +133,11 @@ require('lazy').setup({
       telescope.setup {
         defaults = {
           file_ignore_patterns = {
-            'lib',
+            -- 'lib',
+            -- 'bin',
+            -- 'obj',
             '.git',
             'node_modules',
-            'bin',
-            'obj',
             '%.png',
             '%.jpg',
             '%.jpg',
@@ -255,6 +263,7 @@ require('lazy').setup({
       vim.keymap.set("n", "<leader>gad", ":G add <C-r>=expand('%:h')<CR>", { desc = "Git add directory" })
       vim.keymap.set("n", "<leader>gac", ":G commit %<CR>", { desc = "Git commit file" })
       vim.keymap.set("n", "<leader>gvd", ":Gvdiffsplit<CR>", { desc = "Git vertical diff split" })
+      vim.keymap.set("n", "<leader>gp", ":G push<CR>", { desc = "Git vertical diff split" })
     end
   },
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -321,7 +330,7 @@ require('lazy').setup({
         }
       })
       local servers = {
-        html = {},
+        -- html = {},
         -- clangd = {}
         -- gopls = {},
         black = {},

@@ -63,6 +63,7 @@ md_to_pdf() {
         fi
     done
 }
+
 # ZHS Config
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
@@ -81,32 +82,3 @@ else
 fi
 
 export ARCHFLAGS="-arch x86_64"
-
-
-export ANDROID_HOME=~/Android/Sdk/
-export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
-export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok/lombok.jar"
-export OPENAI_API_KEY=$(cat ~/.open_ai_key)
-export DEEPSEEK_API_KEY=$(cat ~/.deepseek_api_key)
-export PATH=$PATH:~/development/flutter/bin/
-export PATH=$PATH:~/local/templ/
-export PATH=$PATH:~/scripts/
-export PATH=$PATH:~/venv/bin/
-
-
-source ~/.fzf-integration.sh
-source ~/.ripgrep-integration.sh
-source ~/.zsh_local_config.sh
-
-export GPG_TTY=$(tty)
-
-fpath+=~/.zfunc; autoload -Uz compinit; compinit
-source /usr/share/nvm/init-nvm.sh
-
-# pnpm
-export PNPM_HOME="/home/abtuly/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end

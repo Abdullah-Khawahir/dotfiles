@@ -20,9 +20,9 @@ exec_always --no-startup-id picom -b
 exec_always --no-startup-id clipmenud
 exec_always --no-startup-id setxkbmap -layout "us,ara" -option 'grp:win_space_toggle'
 exec_always --no-startup-id xset r rate 300 50
-exec --no-startup-id xsel
-exec --no-startup-id xclip
-exec --no-startup-id nm-applet
+exec_always --no-startup-id xsel
+exec_always --no-startup-id xclip
+exec_always --no-startup-id nm-applet
 
 ## Audio Controls
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -60,6 +60,11 @@ bindsym Mod4+v exec --no-startup-id "clipmenu"
 bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs | xclip -selection clipboard -r
 bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history
 
+## TODO: fix
+# ## decode and read
+# bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs |  tr -d '\n' | xclip -selection clipboard -r
+# ## encode and save
+# bindsym $mod+Mod4+Shift+v exec xsel -o | tr '\n' '\\' >> ~/.clipboard_history
 
 ## macro selected
 # do first
@@ -200,8 +205,19 @@ mode "programs" {
 ## i3 Bar
 bar {
     status_command ~/scripts/myI3Sttus.sh
+        separator_symbol " ● "
+        # workspace_min_width 10
+        # padding 5px 0 0 0
+        # colors {
+        #         # background #271e33FF
+        #         # statusline #d3c6aa
+        # }
 }
 
 ## Window Rules
-for_window [class="zoom"] move container to workspace $ws5
+# for_window [class="zoom"] move container to workspace $ws5
 # for_window [class=".*"] floating disable
+
+# smart_gaps on
+# smart_borders on
+
