@@ -72,6 +72,14 @@ tree
 ttf-dejavu-nerd
 ttf-jetbrains-mono-nerd
 ttf-sourcecodepro-nerd
+ttf-dejavu-nerd
+ttf-jetbrains-mono
+ttf-jetbrains-mono-nerd
+ttf-liberation
+ttf-roboto
+ttf-scheherazade-new
+ttf-sourcecodepro-nerd
+ttf-ubuntu-nerd
 unzip
 util-linux
 vi
