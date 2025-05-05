@@ -17,8 +17,8 @@ evince
 exfat-utils
 fd
 firefox
-font-manager
 fontconfig
+font-manager
 freedownloadmanager
 fzf
 gcc
@@ -28,8 +28,8 @@ gnome-terminal
 google-chrome
 grep
 htop
-i3-wm
 i3status
+i3-wm
 jq
 linux
 linux-firmware
@@ -71,14 +71,11 @@ tesseract
 thunderbird
 tree
 ttf-dejavu-nerd
-ttf-dejavu-nerd
 ttf-jetbrains-mono
-ttf-jetbrains-mono-nerd
 ttf-jetbrains-mono-nerd
 ttf-liberation
 ttf-roboto
 ttf-scheherazade-new
-ttf-sourcecodepro-nerd
 ttf-sourcecodepro-nerd
 ttf-ubuntu-nerd
 unrar-free
@@ -90,5 +87,12 @@ vlc
 wget
 xclip
 xf86-input-libinput
+xorg
+xorg-server
+xorg-xinit
+xorg-xinput
+xorg-xrandr
+xorg-xset
+xterm
 yay
 zsh
