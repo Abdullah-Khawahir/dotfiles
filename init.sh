@@ -11,8 +11,8 @@ contains(){
 stow . --adopt
 rm ~/init.sh
 
-if ! contains "source my.zsh" ~/.zshrc; then
-    echo "source my.zsh" >> ~/.zshrc
+if ! contains "source ~/my.zsh" ~/.zshrc; then
+    echo "source ~/my.zsh" >> ~/.zshrc
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
