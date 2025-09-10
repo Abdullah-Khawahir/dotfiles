@@ -4,6 +4,7 @@ autojump
 awk
 bash
 bat
+brightnessctl
 chromium
 clipmenu
 cmake
@@ -17,8 +18,8 @@ evince
 exfat-utils
 fd
 firefox
-fontconfig
 font-manager
+fontconfig
 freedownloadmanager
 fzf
 gcc
@@ -27,10 +28,12 @@ git
 gnome-terminal
 google-chrome
 grep
+grub
 htop
-i3status
 i3-wm
+i3status
 jq
+keyd
 linux
 linux-firmware
 linux-headers
@@ -46,9 +49,12 @@ neofetch
 neovim
 net-tools
 nodejs
+noto-fonts
 ntfs-3g
 openssh
 openssl
+os-prober
+os-prober 
 pacman
 pcmanfm
 picom
