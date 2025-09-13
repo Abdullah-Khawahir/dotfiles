@@ -26,7 +26,8 @@ exec_always --no-startup-id nm-applet
 
 # ToucPad
 exec_always --no-startup-id xinput set-prop  "FTCS0038:00 2808:0106 Touchpad" "libinput Tapping Enabled" 1
-exec_always --no-startup-id xinput set-prop "FTCS0038:00 2808:0106 Touchpad" "libinput Natural Scrolling Enabled" 1
+exec_always --no-startup-id xinput set-prop "FTCS0038:00 2808:0106 Touchpad" "libinput Natural Scrolling Enabled" 0
+exec_always --no-startup-id xinput set-prop "FTCS0038:00 2808:0106 Touchpad" "libinput Accel Speed" 0.45
 
 ## Audio Controls
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -39,6 +40,10 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 # Brightness control with brightnessctl
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 10%-
+
+# Bluelight control
+exec --no-startup-id redshift-gtk
+bindsym $mod+shift+b exec --no-startup-id pkill -USR1 redshift-gtk
 
 bindsym $mod+KP_Add exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
 bindsym $mod+KP_Subtract exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
@@ -227,6 +232,7 @@ bar {
 # for_window [class="zoom"] move container to workspace $ws5
 # for_window [class=".*"] floating disable
 
-# smart_gaps on
-# smart_borders on
+for_window [class="Emulator"] move to workspace $ws10, floating enable
+
+# smart_gaps on smart_borders on
 

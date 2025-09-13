@@ -522,6 +522,7 @@ require('lazy').setup({
         lsp = {
           on_attach = function()
             vim.api.nvim_set_keymap('n', '<leader>pr', ":FlutterRun<CR>", { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pe', ":FlutterEmulators<CR>", { noremap = true, silent = true })
             vim.api.nvim_set_keymap('n', '<leader>pq', ":FlutterQuit<CR>", { noremap = true, silent = true })
             vim.api.nvim_set_keymap('n', '<leader>pd', ":FlutterDevices<CR>", { noremap = true, silent = true })
             vim.api.nvim_set_keymap('n', '<leader>pR', ":FlutterRestart<CR>", { noremap = true, silent = true })
