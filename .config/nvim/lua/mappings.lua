@@ -177,6 +177,7 @@ vmap('<leader>rc', '\"sy:sno/<C-r>s//gc<Left><Left><Left>',
 nmap("<leader>waf", ":e <C-r>=expand('%:p:h')<CR>/", { desc = "Add [F]ile" })
 nmap("<leader>wad", ":!mkdir -p <C-r>=expand('%:p:h')<CR>/", { desc = "Add [D]irecory" })
 nmap("<leader>wcf", ":!cp % <C-r>=expand('%:p:h')<CR>/", { desc = "Copy File" })
+nmap("<leader>wcp", ":let @+=expand('%')<CR>", { desc = "Copy File" })
 nmap("<leader>wmf", ":!mv % <C-r>=expand('%:p:h')<CR>/", { desc = "Move File" })
 
 -- toggle mappings

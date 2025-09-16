@@ -134,8 +134,8 @@ require('lazy').setup({
         defaults = {
           file_ignore_patterns = {
             -- 'lib',
-            -- 'bin',
-            -- 'obj',
+            'bin',
+            'obj',
             '.git',
             'node_modules',
             '%.png',
@@ -199,22 +199,20 @@ require('lazy').setup({
     version = '*', -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
     opts = {
       hints = { enabled = false },
-      -- -- add any opts here
-      -- -- for example
-      -- show_key_hints = false,  -- Disable keymap hints,
-      provider = "openai",
-      -- openai = {
-      --   endpoint = "https://api.openai.com/v1",
-      --   model = "gpt-4o", -- your desired model (or use gpt-4o, etc.)
-      --   timeout = 30000,  -- timeout in milliseconds
-      --   temperature = 0,  -- adjust if needed
-      --   max_tokens = 4096,
-      --   -- reasoning_effort = "high"   -- only supported for "o" models
-      -- },
-    },
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = "make",
-    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+      provider = 'openai',
+      providers = {
+        openai = {
+          endpoint = "https://api.openai.com/v1",
+          model = "o4-mini", -- your desired model (or use gpt-4o, etc.)
+          timeout = 30000,   -- Timeout in milliseconds, increase this for reasoning models
+          extra_request_body = {
+            temperature = 1,
+            max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
+            reasoning_effort = "medium",  -- low|medium|high, only used for reasoning models
+          },
+        },
+      },
+   },
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "stevearc/dressing.nvim",

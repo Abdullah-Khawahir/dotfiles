@@ -220,7 +220,7 @@ def main():
     args = parser.parse_args()
 
     if args.target in ["movie", "m"]:
-        title = (args.title,)
+        title = args.title
         year = args.year
         index = args.index
         download = args.download

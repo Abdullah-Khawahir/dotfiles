@@ -11,7 +11,7 @@ bindsym $mod+t layout tabbed
 bindsym $mod+e layout toggle split
 
 ## Font Settings
-font pango:DejaVu Sans Mono 8
+font pango:DejaVu Sans Mono 9
 
 ## Startup Applications
 exec --no-startup-id dex --autostart --environment i3
@@ -24,7 +24,7 @@ exec_always --no-startup-id xsel
 exec_always --no-startup-id xclip
 exec_always --no-startup-id nm-applet
 
-# ToucPad
+## ToucPad
 exec_always --no-startup-id xinput set-prop  "FTCS0038:00 2808:0106 Touchpad" "libinput Tapping Enabled" 1
 exec_always --no-startup-id xinput set-prop "FTCS0038:00 2808:0106 Touchpad" "libinput Natural Scrolling Enabled" 0
 exec_always --no-startup-id xinput set-prop "FTCS0038:00 2808:0106 Touchpad" "libinput Accel Speed" 0.45
@@ -198,9 +198,9 @@ bindsym $mod+Ctrl+Shift+Up resize shrink height 1 px or 1 ppt
 bindsym $mod+Ctrl+Shift+Right resize grow width 1 px or 1 ppt
 
 ## Passthrough Mode
-bindsym $mod+Menu mode "Passthrough"
+bindsym $mod+backslash mode "Passthrough"
 mode "Passthrough" {
-    bindsym $mod+Menu mode "default"
+    bindsym $mod+backslash mode "default"
     bindsym Escape mode "default"
 }
 
