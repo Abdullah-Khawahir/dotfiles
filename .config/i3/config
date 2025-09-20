@@ -14,10 +14,10 @@ bindsym $mod+e layout toggle split
 font pango:DejaVu Sans Mono 9
 
 ## Startup Applications
-exec --no-startup-id dex --autostart --environment i3
+# exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id nitrogen --set-zoom-fill ~/images/wallhaven-132l53.jpg
 exec_always --no-startup-id picom -b
-exec_always --no-startup-id clipmenud
+exec --no-startup-id /usr/bin/clipmenud >/dev/null 2>&1 </dev/null
 exec_always --no-startup-id setxkbmap -layout "us,ara" -option 'grp:win_space_toggle'
 exec_always --no-startup-id xset r rate 300 50
 exec_always --no-startup-id xsel
@@ -214,6 +214,7 @@ mode "programs" {
     bindsym l exec ~/scripts/openLinked.sh; mode "default"
     bindsym v exec "find ~/Videos -type f \( -iname '*.mkv' -o -iname '*.mp4' \) | dmenu -l 20 -i | xargs -r -I{} vlc {}"; mode "default"
     bindsym u exec $term -e zsh -c "sudo pacman -Syu --noconfirm && echo 'DONE THE UPDATE' && read"; mode "default"
+    bindsym Next exec $term -e zsh -c "sudo systemctl hibernate "; mode "default"
 }
 
 ## i3 Bar
@@ -232,7 +233,8 @@ bar {
 # for_window [class="zoom"] move container to workspace $ws5
 # for_window [class=".*"] floating disable
 
-for_window [class="Emulator"] move to workspace $ws10, floating enable
+for_window [class="Emulator"] floating enable
+for_window [class="Emulator"] move position 1528px 20px
 
 # smart_gaps on smart_borders on
 

@@ -102,3 +102,4 @@ xorg-xset
 xterm
 yay
 zsh
+cloudflared

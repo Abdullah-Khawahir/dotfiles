@@ -7,6 +7,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 
+vim.api.nvim_command("autocmd BufWritePre *.sh,*.bash silent !chmod +x <afile>")
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
     pattern = "*.cshtml",

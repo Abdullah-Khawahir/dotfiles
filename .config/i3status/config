@@ -31,7 +31,7 @@ tztime KB_LAYOUT {
 
 cpu_temperature 2 {
         format = "%degrees °C"
-        path = "/sys/devices/platform/coretemp.0/hwmon/hwmon5/temp1_input"
+        path = "/sys/devices/platform/coretemp.0/hwmon/hwmon*/temp1_input"
 #		/sys/devices/platform/coretemp.0/hwmon/hwmon3/temp2_input
 #		/sys/devices/platform/coretemp.0/hwmon/hwmon4
 
