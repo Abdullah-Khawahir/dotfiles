@@ -88,6 +88,7 @@ vim.g.netrw_list_hide = (vim.g.netrw_list_hide or '') .. table.concat({
 
 -- compilers
 --  dotnet
-vim.g.dotnet_errors_only = true
+vim.g.dotnet_errors_only =not true
 -- flutter
 vim.g.dart_sdk_path = "~/development/flutter/"
+vim.g.python3_host_prog = "~/venv/bin/python3"

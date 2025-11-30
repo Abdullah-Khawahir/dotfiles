@@ -26,3 +26,6 @@ fi
 #     sway
 #   fi
 # fi
+
+# Added by `rbenv init` on Mon Oct  6 03:10:58 PM +03 2025
+eval "$(~/.rbenv/bin/rbenv init - --no-rehash zsh)"

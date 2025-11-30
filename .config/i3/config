@@ -15,7 +15,7 @@ font pango:DejaVu Sans Mono 9
 
 ## Startup Applications
 # exec --no-startup-id dex --autostart --environment i3
-exec --no-startup-id nitrogen --set-zoom-fill ~/images/wallhaven-132l53.jpg
+exec --no-startup-id nitrogen --set-zoom-fill ~/wallhaven-132l53.jpg
 exec_always --no-startup-id picom -b
 exec --no-startup-id /usr/bin/clipmenud >/dev/null 2>&1 </dev/null
 exec_always --no-startup-id setxkbmap -layout "us,ara" -option 'grp:win_space_toggle'
@@ -23,6 +23,7 @@ exec_always --no-startup-id xset r rate 300 50
 exec_always --no-startup-id xsel
 exec_always --no-startup-id xclip
 exec_always --no-startup-id nm-applet
+exec_always --no-startup-id kdeconnect-indicator
 
 ## ToucPad
 exec_always --no-startup-id xinput set-prop  "FTCS0038:00 2808:0106 Touchpad" "libinput Tapping Enabled" 1
@@ -67,12 +68,15 @@ bindsym $mod+Return exec $term
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec --no-startup-id dmenu_run
 bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+p exec rofi -show calc -modi calc -no-show-match -no-sort | awk -F= '{ print $NF }' | xargs | xclip -rmlastnl -selection clipboard
+bindsym $mod+F12 exec rofi -show calc -modi calc -no-show-match -no-sort | awk -F= '{ print $NF }' | xargs | xclip -rmlastnl -selection clipboard
 
 ## clipboard 
 bindsym Mod4+v exec --no-startup-id "clipmenu"
 bindsym $mod+Shift+v exec tac ~/.clipboard_history | dmenu -i  | xargs | xclip -selection clipboard -r
-bindsym $mod+Mod4+Shift+v exec xsel -o >> ~/.clipboard_history
+bindsym $mod+Mod4+Shift+v exec xsel -o | awk '{print $0}' >> ~/.clipboard_history
+bindsym Mod4+a exec xclip -o -selection primary | awk '{print $0}' >> ~/.appendList
+bindsym Shift+Mod4+a exec $term -e zsh -lic 'nvim ~/.appendList'
+
 
 ## TODO: fix
 # ## decode and read
@@ -95,10 +99,10 @@ bindsym $mod+Shift+T exec zsh -lic 'arecord -f cd -t wav /tmp/audio.wav & pid=$!
 # zsh -lic "arecord -f cd -t wav /tmp/audio.wav & pid=$! && echo 'Recording... (Press Enter to stop)' | dmenu -p 'Recording' && kill $pid && python ~/scripts/transcribe.py /tmp/audio.wav"
 
 
-## Google The currrnt text in clipboard
-bindsym $mod+Shift+g exec xdg-open "https://www.google.com/search?q=$(xclip -o -selection clipboard | sed 's/ /+/g')"
-## Google the current selected text or Demnu Prompt
-bindsym $mod+g exec "xdg-open https://www.google.com/search?q=$(xclip -o -selection primary | sed 's/ /+/g')"
+# Google the current clipboard content
+bindsym $mod+Shift+g exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection clipboard | sed "s/ /+/g")"'
+# Google the current selected text (primary selection) or prompt
+bindsym $mod+g exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection primary | sed "s/ /+/g")"'
 
 ## Focus Movement
 bindsym $mod+j focus down
@@ -212,9 +216,26 @@ mode "programs" {
     bindsym 1 exec google-chrome-stable --profile-directory="Profile 3"; exec slack; exec zoom; mode "default"
     bindsym s exec ~/sleeping_mode.sh; mode "default"
     bindsym l exec ~/scripts/openLinked.sh; mode "default"
-    bindsym v exec "find ~/Videos -type f \( -iname '*.mkv' -o -iname '*.mp4' \) | dmenu -l 20 -i | xargs -r -I{} vlc {}"; mode "default"
+    bindsym v exec "find ~/Videos -type f \( -iname '*.mkv' -o -iname '*.mp4' \) -printf '%T@ %p\n' | sort -nr | cut -d' ' -f2- | dmenu -l 20 -i | xargs -r -I{} vlc {}"; mode "default"
     bindsym u exec $term -e zsh -c "sudo pacman -Syu --noconfirm && echo 'DONE THE UPDATE' && read"; mode "default"
-    bindsym Next exec $term -e zsh -c "sudo systemctl hibernate "; mode "default"
+    bindsym Next exec "i3lock && systemctl hibernate "; mode "default"
+    bindsym c exec "xdg-open https://chatgpt.com/" ; mode "default"
+    bindsym f exec "pcmanfm" ; mode "default"
+}
+
+
+bindsym $mod+p mode "phone"
+mode "phone" {
+    bindsym $mod+p mode "default"
+    bindsym Escape mode "default"
+
+    bindsym d exec --no-startup-id "NUM=$(xclip -o -r -s primary |sed 's/ //g' | sed 's/^0/+966/'| xargs) && adb shell am start -a android.intent.action.DIAL -d tel:$NUM" ; mode "default"
+    bindsym D exec --no-startup-id "NUM=$(xclip -o -r -s primary |sed 's/ //g' | xargs) && adb shell am start -a android.intent.action.DIAL -d tel:$NUM" ; mode "default"
+
+    bindsym m exec gedit ~/.WhatsAppMSG;mode "default"
+
+    bindsym w exec --no-startup-id bash ~/scripts/adb_whatsapp.sh ; mode "default"
+    bindsym $mod+w exec --no-startup-id bash ~/scripts/adb_whatsapp.sh ; mode "default"
 }
 
 ## i3 Bar
@@ -233,8 +254,17 @@ bar {
 # for_window [class="zoom"] move container to workspace $ws5
 # for_window [class=".*"] floating disable
 
-for_window [class="Emulator"] floating enable
-for_window [class="Emulator"] move position 1528px 20px
+# for_window [title=".*Phone_API.*"] floating disable
+# for_window [title=".*Phone_API.*"] move container to workspace current
+# for_window [title=".*Phone_API.*"] move absolute right
+# for_window [title=".*Phone_API.*"] resize set width 520px
+
+
+for_window [title=".*Phone_API.*"] floating disable
+for_window [title=".*Phone_API.*"] split vertical
+for_window [title=".*Phone_API.*"] move right, move right, move right
+for_window [title=".*Phone_API.*"] move container to output right
+for_window [title=".*Phone_API.*"] resize set width 520px
 
 # smart_gaps on smart_borders on
 

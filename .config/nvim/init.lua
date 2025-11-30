@@ -1,4 +1,4 @@
-require("options")
+require 'options'
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -7,9 +7,9 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-require('mappings')
-require("lsp")
-require('lazy').setup({
+require 'mappings'
+require 'lsp'
+require('lazy').setup {
   require 'kickstart.plugins.debug', -- adds gitsigns recommend keymaps
   -- {
   --   "Jezda1337/nvim-html-css",
@@ -49,25 +49,40 @@ require('lazy').setup({
   --     },
   --   },
   -- },
+
   {
-    "LunarVim/bigfile.nvim",
+    'echasnovski/mini.nvim',
+    config = function()
+      require('mini.ai').setup { n_lines = 500 }
+      local statusline = require 'mini.statusline'
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- require('mini.bracketed').setup {}
+      ---@diagnostic disable-next-line: duplicate-set-field
+      -- statusline.section_location = function()
+      --   return '%2l:%-2v'
+      -- end
+    end,
+  },
+
+  {
+    'LunarVim/bigfile.nvim',
     config = function()
       -- default config
-      require("bigfile").setup {
-        filesize = 1,      -- size of the file in MiB, the plugin round file sizes to the closest MiB
-        pattern = { "*" }, -- autocmd pattern or function see <### Overriding the detection of big files>
-        features = {       -- features to disable
-          "indent_blankline",
-          "illuminate",
-          "lsp",
-          "treesitter",
-          "syntax",
-          "matchparen",
-          "vimopts",
-          "filetype",
+      require('bigfile').setup {
+        filesize = 1, -- size of the file in MiB, the plugin round file sizes to the closest MiB
+        pattern = { '*' }, -- autocmd pattern or function see <### Overriding the detection of big files>
+        features = { -- features to disable
+          'indent_blankline',
+          'illuminate',
+          'lsp',
+          'treesitter',
+          'syntax',
+          'matchparen',
+          'vimopts',
+          'filetype',
         },
       }
-    end
+    end,
   },
   -- {
   --   'folke/tokyonight.nvim',
@@ -79,14 +94,14 @@ require('lazy').setup({
   --   end,
   -- },
   {
-    "ellisonleao/gruvbox.nvim",
+    'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = true,
     opts = ...,
     init = function()
       vim.cmd.colorscheme 'gruvbox'
       vim.cmd.hi 'Comment gui=none'
-    end
+    end,
   },
   'vifm/vifm.vim',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
@@ -94,22 +109,22 @@ require('lazy').setup({
     'windwp/nvim-ts-autotag',
     opts = {
       aliases = {
-        ["cshtml"] = "html",
-        ["razor"] = "html"
-      }
+        ['cshtml'] = 'html',
+        ['razor'] = 'html',
+      },
     },
   },
-  -- {
-  --   'github/copilot.vim',
-  --   config = function()
-  --     vim.cmd(':Copilot disable')
-  --     vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-  --       expr = true,
-  --       replace_keycodes = false
-  --     })
-  --   end
-  -- },
-  {                     -- Fuzzy Finder (files, lsp, etc)
+  {
+    'github/copilot.vim',
+    config = function()
+      vim.cmd ':Copilot disable'
+      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+        expr = true,
+        replace_keycodes = false,
+      })
+    end,
+  },
+  { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VeryLazy', -- or a specific command like 'Telescope'
     branch = '0.1.x',
@@ -122,13 +137,13 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
-      { 'nvim-telescope/telescope-ui-select.nvim' },
-      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+      -- { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
-      local telescope = require('telescope')
-      local themes = require('telescope.themes')
-      local builtin = require('telescope.builtin')
+      local telescope = require 'telescope'
+      local themes = require 'telescope.themes'
+      local builtin = require 'telescope.builtin'
 
       telescope.setup {
         defaults = {
@@ -138,12 +153,13 @@ require('lazy').setup({
             'obj',
             '.git',
             'node_modules',
+            '__pycache__',
             '%.png',
             '%.jpg',
             '%.jpg',
-            'Migrations'
+            'Migrations',
           },
-        }
+        },
       }
 
       pcall(telescope.load_extension, 'fzf')
@@ -159,7 +175,8 @@ require('lazy').setup({
         builtin.find_files {
           -- path_display = { "smart" } ,
 
-          hidden = false }
+          hidden = false,
+        }
       end, { desc = '[S]earch [F]iles' })
       nmap('<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       nmap('<leader>sw', function()
@@ -178,7 +195,7 @@ require('lazy').setup({
         builtin.current_buffer_fuzzy_find(themes.get_dropdown {
           winblend = 10,
           previewer = false,
-          width = 95
+          width = 95,
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
       nmap('<leader>s/', function()
@@ -193,8 +210,8 @@ require('lazy').setup({
     end,
   },
   {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
+    'yetone/avante.nvim',
+    event = 'VeryLazy',
     lazy = false,
     version = '*', -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
     opts = {
@@ -202,53 +219,53 @@ require('lazy').setup({
       provider = 'openai',
       providers = {
         openai = {
-          endpoint = "https://api.openai.com/v1",
-          model = "o4-mini", -- your desired model (or use gpt-4o, etc.)
-          timeout = 30000,   -- Timeout in milliseconds, increase this for reasoning models
+          endpoint = 'https://api.openai.com/v1',
+          model = 'o4-mini', -- your desired model (or use gpt-4o, etc.)
+          timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
           extra_request_body = {
             temperature = 1,
             max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-            reasoning_effort = "medium",  -- low|medium|high, only used for reasoning models
+            reasoning_effort = 'medium', -- low|medium|high, only used for reasoning models
           },
         },
       },
-      rag_service = {                         -- RAG Service configuration
-        enabled = false,                      -- Enables the RAG service
-        host_mount = os.getenv("HOME"),       -- Host mount path for the rag service (Docker will mount this path)
-        runner = "docker",                    -- Runner for the RAG service (can use docker or nix)
-        llm = {                               -- Language Model (LLM) configuration for RAG service
-          provider = "openai",                -- LLM provider
-          endpoint = "https://api.openai.com/v1", -- LLM API endpoint
-          api_key = "OPENAI_API_KEY",         -- Environment variable name for the LLM API key
-          model = "gpt-4o-mini",              -- LLM model name
-          extra = nil,                        -- Additional configuration options for LLM
+      rag_service = { -- RAG Service configuration
+        enabled = false, -- Enables the RAG service
+        host_mount = os.getenv 'HOME', -- Host mount path for the rag service (Docker will mount this path)
+        runner = 'docker', -- Runner for the RAG service (can use docker or nix)
+        llm = { -- Language Model (LLM) configuration for RAG service
+          provider = 'openai', -- LLM provider
+          endpoint = 'https://api.openai.com/v1', -- LLM API endpoint
+          api_key = 'OPENAI_API_KEY', -- Environment variable name for the LLM API key
+          model = 'gpt-4o-mini', -- LLM model name
+          extra = nil, -- Additional configuration options for LLM
         },
-        embed = {                             -- Embedding model configuration for RAG service
-          provider = "openai",                -- Embedding provider
-          endpoint = "https://api.openai.com/v1", -- Embedding API endpoint
-          api_key = "OPENAI_API_KEY",         -- Environment variable name for the embedding API key
-          model = "text-embedding-3-large",   -- Embedding model name
-          extra = nil,                        -- Additional configuration options for the embedding model
+        embed = { -- Embedding model configuration for RAG service
+          provider = 'openai', -- Embedding provider
+          endpoint = 'https://api.openai.com/v1', -- Embedding API endpoint
+          api_key = 'OPENAI_API_KEY', -- Environment variable name for the embedding API key
+          model = 'text-embedding-3-large', -- Embedding model name
+          extra = nil, -- Additional configuration options for the embedding model
         },
-        docker_extra_args = "",               -- Extra arguments to pass to the docker command
+        docker_extra_args = '', -- Extra arguments to pass to the docker command
       },
     },
     dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
+      'nvim-treesitter/nvim-treesitter',
+      'stevearc/dressing.nvim',
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
       --- The below dependencies are optional,
-      "echasnovski/mini.pick",         -- for file_selector provider mini.pick
-      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-      "hrsh7th/nvim-cmp",              -- autocompletion for avante commands and mentions
-      "ibhagwan/fzf-lua",              -- for file_selector provider fzf
-      "nvim-tree/nvim-web-devicons",   -- or echasnovski/mini.icons
+      'echasnovski/mini.pick', -- for file_selector provider mini.pick
+      'nvim-telescope/telescope.nvim', -- for file_selector provider telescope
+      'hrsh7th/nvim-cmp', -- autocompletion for avante commands and mentions
+      'ibhagwan/fzf-lua', -- for file_selector provider fzf
+      'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
       -- "zbirenbaum/copilot.lua",          -- for providers='copilot'
       {
         -- support for image pasting
-        "HakonHarnes/img-clip.nvim",
-        event = "VeryLazy",
+        'HakonHarnes/img-clip.nvim',
+        event = 'VeryLazy',
         opts = {
           -- recommended settings
           default = {
@@ -266,23 +283,23 @@ require('lazy').setup({
         -- Make sure to set this up properly if you have lazy=true
         'MeanderingProgrammer/render-markdown.nvim',
         opts = {
-          file_types = { "markdown", "Avante" },
+          file_types = { 'markdown', 'Avante' },
         },
-        ft = { "markdown", "Avante" },
+        ft = { 'markdown', 'Avante' },
       },
     },
   },
   {
     'tpope/vim-fugitive',
     config = function()
-      vim.keymap.set("n", "<leader>gs", ":G<CR>", { desc = "Git status" })
-      vim.keymap.set("n", "<leader>gc", ":G commit<CR>", { desc = "Git commit" })
-      vim.keymap.set("n", "<leader>gaf", ":G add %<CR>", { desc = "Git add file" })
-      vim.keymap.set("n", "<leader>gad", ":G add <C-r>=expand('%:h')<CR>", { desc = "Git add directory" })
-      vim.keymap.set("n", "<leader>gac", ":G commit %<CR>", { desc = "Git commit file" })
-      vim.keymap.set("n", "<leader>gvd", ":Gvdiffsplit<CR>", { desc = "Git vertical diff split" })
-      vim.keymap.set("n", "<leader>gp", ":G push<CR>", { desc = "Git vertical diff split" })
-    end
+      vim.keymap.set('n', '<leader>gs', ':G<CR>', { desc = 'Git status' })
+      vim.keymap.set('n', '<leader>gc', ':G commit<CR>', { desc = 'Git commit' })
+      vim.keymap.set('n', '<leader>gaf', ':G add %<CR>', { desc = 'Git add file' })
+      vim.keymap.set('n', '<leader>gad', ":G add <C-r>=expand('%:h')<CR>", { desc = 'Git add directory' })
+      vim.keymap.set('n', '<leader>gac', ':G commit %<CR>', { desc = 'Git commit file' })
+      vim.keymap.set('n', '<leader>gvd', ':Gvdiffsplit<CR>', { desc = 'Git vertical diff split' })
+      vim.keymap.set('n', '<leader>gp', ':G push<CR>', { desc = 'Git vertical diff split' })
+    end,
   },
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
@@ -291,10 +308,10 @@ require('lazy').setup({
     event = { 'BufRead', 'BufNewFile' }, -- Load only when reading or creating a file
   },
   {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
     config = function()
-      require("nvim-autopairs").setup {}
+      require('nvim-autopairs').setup {}
     end,
   },
   { -- Highlight, edit, and navigate code
@@ -329,40 +346,47 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       'Hoffs/omnisharp-extended-lsp.nvim',
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
-      { 'folke/neodev.nvim',       opts = {} },
+      { 'folke/neodev.nvim', opts = {} },
 
       'mfussenegger/nvim-jdtls',
     },
     config = function()
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-      require('lspconfig').ts_ls.setup({
-        init_options = {
-          preferences = {
-            importModuleSpecifierPreference = 'relative',
-            importModuleSpecifierEnding = 'minimal',
-          },
-        }
-      })
+
       local servers = {
         -- html = {},
-        -- clangd = {}
+        -- clangd = {},
         -- gopls = {},
-        black = {},
         -- rust_analyzer = {},
-        -- omnisharp = {
-        --   enable_roslyn_analyzers = true,
-        --   organize_imports_on_format = true,
-        --   enable_import_completion = true,
-        -- },
+        omnisharp = {
+          enable_roslyn_analyzers = false,
+          enable_ms_build_load_projects_on_demand = false,
+          organize_imports_on_format = false,
+        },
+
+        -- Python formatter/linter
+        black = {},
+
+        -- Lua language server
         lua_ls = {
           settings = {
             Lua = {
-              completion = {
-                callSnippet = 'Replace',
+              runtime = {
+                version = 'LuaJIT', -- Neovim uses LuaJIT
+              },
+              diagnostics = {
+                globals = { 'vim' }, -- Recognize `vim` as a global
+              },
+              workspace = {
+                library = vim.api.nvim_get_runtime_file('', true), -- Add Neovim runtime files
+                checkThirdParty = false, -- Avoid annoying prompts
+              },
+              telemetry = {
+                enable = false,
               },
             },
           },
@@ -371,25 +395,70 @@ require('lazy').setup({
 
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
+        'stylua', -- Lua formatter
       })
+
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            vim.lsp.config(server_name, server)
           end,
         },
       }
-      local lspconfig = require('lspconfig')
-      lspconfig.pyright.setup({
-        root_dir = lspconfig.util.root_pattern(
-          '.git', 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt')
+
+      vim.lsp.config('lua_ls', {
+        settings = {
+          Lua = {
+            runtime = {
+              -- Use LuaJIT in Neovim
+              version = 'LuaJIT',
+            },
+            diagnostics = {
+              -- Tell the LSP that `vim` is a global
+              globals = { 'vim' },
+            },
+            workspace = {
+              -- Make the server aware of Neovim runtime files
+              library = vim.api.nvim_get_runtime_file('', true),
+            },
+            telemetry = { enable = false },
+          },
+        },
+      })
+
+      vim.lsp.config('ts_ls', {
+        capabilities = capabilities,
+        init_options = {
+          preferences = {
+            importModuleSpecifierPreference = 'relative',
+            importModuleSpecifierEnding = 'minimal',
+          },
+        },
+      })
+
+      -- vim.lsp.config('omnisharp', {
+      --   enable_roslyn_analyzers = false,
+      --   enable_ms_build_load_projects_on_demand = false,
+      --   organize_imports_on_format = false,
+      -- })
+
+      vim.lsp.config('pyright', {
+        capabilities = capabilities,
+        venvPath = '~/venv',
+        venv = 'venv',
+        analysis = {
+          autoSearchPaths = true,
+          useLibraryCodeForTypes = true,
+        },
+        root_markers = { '.git', '.git', 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt' },
       })
     end,
   },
+
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -408,7 +477,7 @@ require('lazy').setup({
             'rafamadriz/friendly-snippets',
             config = function()
               require('luasnip.loaders.from_vscode').lazy_load()
-              require('luasnip.loaders.from_lua').load({ paths = "~/.config/nvim/lua/snippets/" })
+              require('luasnip.loaders.from_lua').load { paths = '~/.config/nvim/lua/snippets/' }
             end,
           },
         },
@@ -489,44 +558,44 @@ require('lazy').setup({
     end,
   },
   {
-    "jackMort/ChatGPT.nvim",
-    event = "VeryLazy",
+    'jackMort/ChatGPT.nvim',
+    event = 'VeryLazy',
     dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
+      'MunifTanjim/nui.nvim',
+      'nvim-lua/plenary.nvim',
       {
-        "folke/trouble.nvim",
-        config = true
+        'folke/trouble.nvim',
+        config = true,
       },
-      "nvim-telescope/telescope.nvim"
+      'nvim-telescope/telescope.nvim',
     },
     config = function()
-      require("chatgpt").setup({
+      require('chatgpt').setup {
         openai_params = {
-          model = "gpt-4-1106-preview",
+          model = 'gpt-4-1106-preview',
           frequency_penalty = 0,
           presence_penalty = 0,
           max_tokens = 4095,
           temperature = 0.2,
           top_p = 0.1,
           n = 1,
-        }
-      })
+        },
+      }
       local map = function(modes, key, cmd, descrp)
-        vim.keymap.set(modes, "<leader>c" .. key, cmd, { desc = "GPT: " .. descrp })
+        vim.keymap.set(modes, '<leader>c' .. key, cmd, { desc = 'GPT: ' .. descrp })
       end
 
-      map({ "n", "v" }, 'c', "<cmd>ChatGPT<CR>", "ChatGPT")
-      map({ "n", "v" }, 'e', "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction")
-      map({ "n", "v" }, 'g', "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction")
-      map({ "n", "v" }, 't', "<cmd>ChatGPTRun translate<CR>", "Translate")
-      map({ "n", "v" }, 'd', "<cmd>ChatGPTRun docstring<CR>", "Docstring")
-      map({ "n", "v" }, 'o', "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code")
-      map({ "n", "v" }, 'f', "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs")
-      map({ "n", "v" }, 'r', "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit")
-      map({ "n", "v" }, 'l', "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis")
-      map({ "n", "v" }, 'h', "<cmd>ChatGPTRun explain_code<CR>", "Code Explaination")
-    end
+      map({ 'n', 'v' }, 'c', '<cmd>ChatGPT<CR>', 'ChatGPT')
+      map({ 'n', 'v' }, 'e', '<cmd>ChatGPTEditWithInstruction<CR>', 'Edit with instruction')
+      map({ 'n', 'v' }, 'g', '<cmd>ChatGPTRun grammar_correction<CR>', 'Grammar Correction')
+      map({ 'n', 'v' }, 't', '<cmd>ChatGPTRun translate<CR>', 'Translate')
+      map({ 'n', 'v' }, 'd', '<cmd>ChatGPTRun docstring<CR>', 'Docstring')
+      map({ 'n', 'v' }, 'o', '<cmd>ChatGPTRun optimize_code<CR>', 'Optimize Code')
+      map({ 'n', 'v' }, 'f', '<cmd>ChatGPTRun fix_bugs<CR>', 'Fix Bugs')
+      map({ 'n', 'v' }, 'r', '<cmd>ChatGPTRun roxygen_edit<CR>', 'Roxygen Edit')
+      map({ 'n', 'v' }, 'l', '<cmd>ChatGPTRun code_readability_analysis<CR>', 'Code Readability Analysis')
+      map({ 'n', 'v' }, 'h', '<cmd>ChatGPTRun explain_code<CR>', 'Code Explaination')
+    end,
   },
   {
     'akinsho/flutter-tools.nvim',
@@ -539,24 +608,28 @@ require('lazy').setup({
       require('flutter-tools').setup {
         lsp = {
           on_attach = function()
-            vim.api.nvim_set_keymap('n', '<leader>pr', ":FlutterRun<CR>", { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>pe', ":FlutterEmulators<CR>", { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>pq', ":FlutterQuit<CR>", { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>pd', ":FlutterDevices<CR>", { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>pR', ":FlutterRestart<CR>", { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>pa', ":FlutterReanalyze<CR>", { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>po', ":FlutterOutlineToggle<CR>", { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>pl', ":FlutterLspRestart<CR>", { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pr', ':FlutterRun<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pe', ':FlutterEmulators<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pq', ':FlutterQuit<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pd', ':FlutterDevices<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pR', ':FlutterRestart<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pa', ':FlutterReanalyze<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>po', ':FlutterOutlineToggle<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pl', ':FlutterLspRestart<CR>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<leader>pll', ':FlutterLogToggle<CR>', { noremap = true, silent = true })
           end,
           capabilities = require('cmp_nvim_lsp').default_capabilities(), -- for nvim-cmp (optional)
           init_options = {
-            closingLabels = true,                                        -- Show closing labels in code
+            closingLabels = true, -- Show closing labels in code
           },
+        },
+        dev_log = {
+          enabled = true, -- don't show logs automatically
         },
       }
     end,
-  }
-})
+  },
+}
 
 -- require('lazy').setup({
 --     {
@@ -1149,8 +1222,9 @@ require('lazy').setup({
 --   }
 -- )
 
-require('autocommands')
-require('terminal')
-require('dash')
+require 'autocommands'
+require 'terminal'
+require 'dash'
+-- require('auto-session')
 -- the line beneath this is called `modeline`. see `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

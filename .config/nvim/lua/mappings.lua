@@ -143,8 +143,8 @@ nmap('<leader>pv', '<cmd>Vex!<CR>', { desc = 'opens [V]ertical Explorer' })
 -- search and find mappings
 nmap('<leader>po', ':args **/*', { desc = '[O]pen files using glob' })
 
-nmap('<leader>t', ':Vex <CR>', { desc = '[O]pen project [t]ree' })
-nmap('<leader>T', ':Vex <C-r>=expand(\'%:h\')<CR><CR>', { desc = '[O]pen project [t]ree current dir' })
+-- nmap('<leader>t', ':Vex <CR>', { desc = '[O]pen project [t]ree' })
+-- nmap('<leader>T', ':Vex <C-r>=expand(\'%:h\')<CR><CR>', { desc = '[O]pen project [t]ree current dir' })
 
 nmap('<leader>sf', ':args **/*', { desc = 'Open [f]iles using glob' })
 nmap('<leader>sn', ':args ~/.config/nvim/**/*', { desc = 'Open co[n]fig files using glob' })
@@ -175,7 +175,7 @@ vmap('<leader>rc', '\"sy:sno/<C-r>s//gc<Left><Left><Left>',
     { desc = "Replace Selected in [c]urrent line" })
 
 nmap("<leader>waf", ":e <C-r>=expand('%:p:h')<CR>/", { desc = "Add [F]ile" })
-nmap("<leader>wad", ":!mkdir -p <C-r>=expand('%:p:h')<CR>/", { desc = "Add [D]irecory" })
+nmap("<leader>wad", ":silent !mkdir -p <C-r>=expand('%:p:h')<CR>/", { desc = "Add [D]irecory" })
 nmap("<leader>wcf", ":!cp % <C-r>=expand('%:p:h')<CR>/", { desc = "Copy File" })
 nmap("<leader>wcp", ":let @+=expand('%')<CR>", { desc = "Copy File" })
 nmap("<leader>wmf", ":!mv % <C-r>=expand('%:p:h')<CR>/", { desc = "Move File" })

@@ -7,7 +7,8 @@ else
         docker start n8n
     else
         docker volume create n8n_data
-        sudo docker run -d  -it --rm  \
+        sudo docker run -d  -it  \
+            --restart unless-stopped  \
             --name n8n \
             --hostname n8n.abdullah-khwahir.me \
             -e WEBHOOK_URL=https://n8n.abdullah-khwahir.me \

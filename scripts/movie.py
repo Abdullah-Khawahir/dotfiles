@@ -213,8 +213,8 @@ def main():
     show.add_argument(
         "-d",
         "--download",
-        type=int,
-        help="Download or print the magnet link if provided",
+        type=lambda s: [int(x) for x in s.split(",")],
+        help="Comma-separated list like: 1,2,5",
     )
 
     args = parser.parse_args()
@@ -247,11 +247,11 @@ def main():
     elif args.target in ["tv", "t"]:
         title = args.title
         index = args.index
-        download = args.download
+        downloads = args.download
         torrents = search_show(title_or_id=title, index=index)
-        if download and torrents:
-            # print(torrents[download]['magnet_url'])
-            open_magnet_link(torrents[download]["magnet_url"])
+        if downloads:
+                for d in downloads:
+                    open_magnet_link(torrents[d]["magnet_url"])
 
     elif args.target in ["imdb", "i"]:
         title = args.title
@@ -266,4 +266,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print("An error occurred:\n", e)
+
