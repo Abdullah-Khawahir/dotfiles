@@ -31,11 +31,19 @@ def search_show(title_or_id: str, index: int = -1):
 
 
 def movie_search(title_or_id, index: int | None):
-    url = "https://yts.mx/api/v2/list_movies.json"
-    params = urlencode({"limit": 50, "query_term": title_or_id})
-    res = u.request("GET", f"{url}?{params}").json()
-    if not "movies" in res["data"]:
-        return []
+    proxies = ["YTS.MX","YTS.LT", "YTS.GG", "YTS.AM", "YTS.AG"]
+    for proxy in proxies:
+        url = f"https://{proxy}/api/v2/list_movies.json"
+        params = urlencode({"limit": 50, "query_term": title_or_id})
+        try:
+            res = u.request("GET", f"{url}?{params}").json()
+            if "movies" in res["data"]:
+                break
+        except:
+            pass
+    else:
+        raise Exception("All proxies failed to retrieve data. Check https://yifystatus.com/" )
+
     movie_list = res["data"]["movies"]
     movies = [
         {
