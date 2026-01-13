@@ -1,6 +1,6 @@
 #!/bin/bash
 
-firefox\
+firefox \
 "https://www.linkedin.com/jobs/search/?keywords=software%20engineer&geoId=100459316&distance=25&f_AL=true" \
 "https://www.linkedin.com/jobs/search/?keywords=software%20developer&geoId=100459316&distance=25&f_AL=true" \
 "https://www.linkedin.com/jobs/search/?keywords=full%20stack%20developer&geoId=100459316&distance=25&f_AL=true" \

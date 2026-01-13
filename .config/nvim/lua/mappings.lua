@@ -158,6 +158,9 @@ nmap('<leader>sw', ":vim// **<Left><Left><Left><Left>",
 nmap('<leader>sw', ":vim/<C-r>=expand('<cword>')<CR>/ **<Left><Left><Left><Left>",
     { desc = "grep search current word in **" })
 
+nmap('<leader>s+', ":vim/<C-r>+/ **<Left><Left><Left><Left>",
+    { desc = "grep search clipboard word in **" })
+
 vmap('gX', '"gy:!xdg-open "https://www.google.com/search?q=<C-R>g"<left>',
     { desc = "Search selected text in Google" })
 
@@ -180,21 +183,21 @@ nmap("<leader>wcf", ":!cp % <C-r>=expand('%:p:h')<CR>/", { desc = "Copy File" })
 nmap("<leader>wcp", ":let @+=expand('%')<CR>", { desc = "Copy File" })
 nmap("<leader>wmf", ":!mv % <C-r>=expand('%:p:h')<CR>/", { desc = "Move File" })
 
--- toggle mappings
-IS_ARABIC = false
-nmap('<leader>ta', function()
-    if not IS_ARABIC then
-        -- vim.cmd ':set arabic'
-        vim.cmd ':set termbidi'
-        vim.cmd ':set rightleft'
-    else
-        -- vim.cmd ':set noarabic'
-        vim.cmd ':set notermbidi'
-        vim.cmd ':set norightleft'
-    end
-    IS_ARABIC = not IS_ARABIC
-end, { desc = '[A]rabic Toggle' })
-nmap('<leader>tr', ':set wrap!<CR>', { desc = 'W[r]ap Toggle' })
+-- -- toggle mappings
+-- IS_ARABIC = false
+-- nmap('<leader>ta', function()
+--     if not IS_ARABIC then
+--         -- vim.cmd ':set arabic'
+--         vim.cmd ':set termbidi'
+--         vim.cmd ':set rightleft'
+--     else
+--         -- vim.cmd ':set noarabic'
+--         vim.cmd ':set notermbidi'
+--         vim.cmd ':set norightleft'
+--     end
+--     IS_ARABIC = not IS_ARABIC
+-- end, { desc = '[A]rabic Toggle' })
+-- nmap('<leader>tr', ':set wrap!<CR>', { desc = 'W[r]ap Toggle' })
 
 nmap('\\c', function()
     if vim.o.cmdheight == 0 then

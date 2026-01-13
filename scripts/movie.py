@@ -6,14 +6,14 @@ from urllib.parse import quote, quote_plus, urlencode
 import urllib3 as u
 
 
-def search_show(title_or_id: str, index: int = -1):
+def search_show(title_or_id: str, index: int = -1 , page:int = 1):
     show = imdb_search(
         title_or_id=title_or_id, year=None, media_type="series", index=index
     )
     if len(show) != 1:
         return []
     imdb_id = str(show[0]["imdbID"]).removeprefix("tt")
-    eztv_url = f"https://eztvx.to/api/get-torrents?imdb_id={imdb_id}&limit=100&page=1"
+    eztv_url = f"https://eztvx.to/api/get-torrents?imdb_id={imdb_id}&limit=100&page={page}"
     eztv_res = u.request("GET", eztv_url)
     eztv_result = eztv_res.json()
     torrents = [t for t in eztv_result["torrents"]]
@@ -122,7 +122,7 @@ def create_magenet(md, m):
 
 
 def imdb_search(
-    title_or_id: str, year: str | None, media_type: str | None, index: int = -1
+    title_or_id: str, year: str | None, media_type: str | None, index: int = -1, page = 1
 ):
     title = None
     id = None
@@ -138,7 +138,7 @@ def imdb_search(
         "y": year,  # year
         "type": media_type,  # ["movie", "series", "episode"]
         "r": "json",  # ["json", "xml"]
-        "page": 1,  # 1-100
+        "page": page,  # 1-100
     }
     omdb_url = "https://www.omdbapi.com/?" + "&".join(
         [f"{p}={quote_plus(str(v))}" for p, v in params.items() if v is not None]
@@ -255,8 +255,9 @@ def main():
     elif args.target in ["tv", "t"]:
         title = args.title
         index = args.index
+        page = args.page
         downloads = args.download
-        torrents = search_show(title_or_id=title, index=index)
+        torrents = search_show(title_or_id=title, index=index , page=page)
         if downloads:
                 for d in downloads:
                     open_magnet_link(torrents[d]["magnet_url"])
@@ -267,7 +268,8 @@ def main():
         year = args.year
         index = args.index
         download = args.download
-        imdb_search(title_or_id=title, year=year, media_type=media_type, index=index)
+        page = args.page
+        imdb_search(title_or_id=title, year=year, media_type=media_type, index=index, page=page)
 
     else:
         parser.print_help()
