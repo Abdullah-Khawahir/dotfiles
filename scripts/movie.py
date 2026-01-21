@@ -31,7 +31,14 @@ def search_show(title_or_id: str, index: int = -1 , page:int = 1):
 
 
 def movie_search(title_or_id, index: int | None):
-    proxies = ["YTS.MX","YTS.LT", "YTS.GG", "YTS.AM", "YTS.AG"]
+    proxies = [
+            "YTS.BZ",
+            "YTS.MX",
+            "YTS.LT",
+            "YTS.GG",
+            "YTS.AM",
+            "YTS.AG"
+]
     for proxy in proxies:
         url = f"https://{proxy}/api/v2/list_movies.json"
         params = urlencode({"limit": 50, "query_term": title_or_id})
