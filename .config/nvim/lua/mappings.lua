@@ -161,10 +161,10 @@ nmap('<leader>sw', ":vim/<C-r>=expand('<cword>')<CR>/ **<Left><Left><Left><Left>
 nmap('<leader>s+', ":vim/<C-r>+/ **<Left><Left><Left><Left>",
     { desc = "grep search clipboard word in **" })
 
-vmap('gX', '"gy:!xdg-open "https://www.google.com/search?q=<C-R>g"<left>',
+vmap('gX', '"gy:silent !xdg-open "https://www.google.com/search?q=<C-R>g"<left>',
     { desc = "Search selected text in Google" })
 
-nmap('gX', '"gy:!xdg-open "https://www.google.com/search?q="<left>',
+nmap('gX', '"gy:silent !xdg-open "https://www.google.com/search?q="<left>',
     { desc = "Google search" })
 
 nmap('<C-i>', '<C-i>', { noremap = true, silent = true })
