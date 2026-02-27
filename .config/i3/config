@@ -44,8 +44,8 @@ bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 10%-
 
 # Bluelight control
-exec --no-startup-id redshift-gtk
-bindsym $mod+shift+b exec --no-startup-id pkill -USR1 redshift-gtk
+# exec --no-startup-id redshift-gtk
+# bindsym $mod+shift+b exec --no-startup-id pkill -USR1 redshift-gtk
 
 bindsym $mod+KP_Add exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
 bindsym $mod+KP_Subtract exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
@@ -205,7 +205,7 @@ bindsym $mod+Ctrl+Shift+Right resize grow width 1 px or 1 ppt
 ## Passthrough Mode
 bindsym $mod+backslash mode "Passthrough"
 mode "Passthrough" {
-    bindsym $mod+backslash mode "default"
+    # bindsym $mod+backslash mode "default"
     bindsym Escape mode "default"
 }
 

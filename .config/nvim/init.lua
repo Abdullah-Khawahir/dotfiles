@@ -131,6 +131,9 @@ require('lazy').setup {
   },
   'vifm/vifm.vim',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  'tpope/vim-dadbod',
+  'kristijanhusak/vim-dadbod-ui',
+  'kristijanhusak/vim-dadbod-completion',
   {
     'windwp/nvim-ts-autotag',
     opts = {
@@ -141,9 +144,20 @@ require('lazy').setup {
     },
   },
   {
+    'zbirenbaum/copilot-cmp',
+    config = function()
+      require('copilot_cmp').setup()
+    end,
+  },
+  {
     'github/copilot.vim',
     config = function()
+      -- require('copilot').setup {
+      --   suggestion = { enabled = false },
+      --   panel = { enabled = false },
+      -- }
       vim.cmd ':Copilot disable'
+      vim.keymap.set('i', '<C-\\>', '<Plug>(copilot-suggest)')
       vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
         expr = true,
         replace_keycodes = false,
@@ -381,7 +395,7 @@ require('lazy').setup {
     },
     config = function()
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
 
       local servers = {
         -- html = {},
@@ -394,8 +408,12 @@ require('lazy').setup {
           organize_imports_on_format = false,
         },
 
+        -- -- Python LSPs
+        -- ruff = {},
+        -- basedpyright ={},
+
         -- Python formatter/linter
-        black = {},
+        -- black = {},
 
         -- Lua language server
         lua_ls = {
@@ -474,9 +492,9 @@ require('lazy').setup {
 
       vim.lsp.config('pyright', {
         capabilities = capabilities,
-        venvPath = '~/venv',
         venv = 'venv',
         analysis = {
+          venvPath = '/home/a/venv',
           autoSearchPaths = true,
           useLibraryCodeForTypes = true,
         },
@@ -484,105 +502,158 @@ require('lazy').setup {
       })
     end,
   },
-
-  { -- Autocompletion
-    'hrsh7th/nvim-cmp',
+  {
+    'Saghen/blink.cmp',
+    version = '1.*', -- 👈 important
     event = 'InsertEnter',
     dependencies = {
-      -- Snippet Engine & its associated nvim-cmp source
-      {
-        'L3MON4D3/LuaSnip',
-        build = (function()
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-            return
-          end
-          return 'make install_jsregexp'
-        end)(),
-        dependencies = {
-          {
-            'rafamadriz/friendly-snippets',
-            config = function()
-              require('luasnip.loaders.from_vscode').lazy_load()
-              require('luasnip.loaders.from_lua').load { paths = '~/.config/nvim/lua/snippets/' }
-            end,
+      'L3MON4D3/LuaSnip',
+    },
+
+    opts = {
+      keymap = {
+        preset = 'default',
+        -- Trigger
+        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        -- Navigate
+        ['<C-n>'] = { 'select_next' },
+        ['<C-p>'] = { 'select_prev' },
+        ['<Tab>'] = { 'select_next', 'fallback' },
+        ['<S-Tab>'] = { 'select_prev', 'fallback' },
+
+        -- Accept (like VSCode Enter)
+        ['<CR>'] = { 'accept', 'fallback' },
+      },
+      completion = {
+        documentation = { auto_show = true },
+
+        list = {
+          selection = {
+            preselect = false,
+            auto_insert = true,
           },
+        },
+        ghost_text = {
+          enabled = true, -- 👈 VSCode inline preview
         },
       },
-      'saadparwaiz1/cmp_luasnip',
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-path',
+      sources = {
+        default = {
+          'lsp',
+          'path',
+          'snippets',
+          'buffer',
+        },
+        per_filetype = {
+          sql = { 'snippets', 'dadbod', 'buffer' },
+        },
+        providers = {
+          dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
+        },
+      },
     },
-    config = function()
-      local cmp = require 'cmp'
-      local luasnip = require 'luasnip'
-      cmp.setup {
-        view = {
-          docs = {
-            auto_open = true,
-          },
-        },
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
-        completion = { completeopt = 'menu,menuone,preview,noselect,popup' },
-        mapping = cmp.mapping.preset.insert {
-          ['<C-n>'] = cmp.mapping.select_next_item(),
-          ['<C-p>'] = cmp.mapping.select_prev_item(),
-          ['<C-b>'] = function()
-            if cmp.visible_docs() then
-              cmp.scroll_docs(-4)
-            else
-              cmp.open_docs()
-            end
-          end,
-          ['<C-f>'] = function()
-            if cmp.visible_docs() then
-              cmp.scroll_docs(4)
-            else
-              cmp.open_docs()
-            end
-          end,
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
-          ['<CR>'] = cmp.mapping.confirm {},
-          ['<Tab>'] = cmp.mapping.select_next_item(),
-          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-          ['<C-Space>'] = function()
-            if not cmp.visible() then
-              cmp.complete()
-            else
-              cmp.close()
-              cmp.close_docs()
-            end
-          end,
-          ['<C-l>'] = cmp.mapping(function()
-            if luasnip.expand_or_locally_jumpable() then
-              luasnip.expand_or_jump()
-            end
-          end, { 'i', 's' }),
-          ['<C-h>'] = cmp.mapping(function()
-            if luasnip.locally_jumpable(-1) then
-              luasnip.jump(-1)
-            end
-          end, { 'i', 's' }),
-        },
-        sources = {
-          { name = 'nvim_lsp' },
-          { name = 'path' },
-          { name = 'luasnip' },
-          { name = 'buffer' },
-        },
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
-        formatting = {
-          format = require('nvim-highlight-colors').format,
-        },
-      }
-    end,
   },
+
+  -- { -- Autocompletion
+  --   'hrsh7th/nvim-cmp',
+  --   event = 'InsertEnter',
+  --   dependencies = {
+  --     -- Snippet Engine & its associated nvim-cmp source
+  --     {
+  --       'L3MON4D3/LuaSnip',
+  --       build = (function()
+  --         if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+  --           return
+  --         end
+  --         return 'make install_jsregexp'
+  --       end)(),
+  --       dependencies = {
+  --         {
+  --           'rafamadriz/friendly-snippets',
+  --           config = function()
+  --             require('luasnip.loaders.from_vscode').lazy_load()
+  --             require('luasnip.loaders.from_lua').load { paths = '~/.config/nvim/lua/snippets/' }
+  --           end,
+  --         },
+  --       },
+  --     },
+  --     'saadparwaiz1/cmp_luasnip',
+  --     'hrsh7th/cmp-nvim-lsp',
+  --     'hrsh7th/cmp-path',
+  --   },
+  --   config = function()
+  --     local cmp = require 'cmp'
+  --     local luasnip = require 'luasnip'
+  --     cmp.setup {
+  --       view = {
+  --         docs = {
+  --           auto_open = true,
+  --         },
+  --       },
+  --       window = {
+  --         completion = cmp.config.window.bordered(),
+  --         documentation = cmp.config.window.bordered(),
+  --       },
+  --       completion = { completeopt = 'menu,menuone,preview,noselect,popup' },
+  --       mapping = cmp.mapping.preset.insert {
+  --         ['<C-n>'] = cmp.mapping.select_next_item(),
+  --         ['<C-p>'] = cmp.mapping.select_prev_item(),
+  --         ['<C-b>'] = function()
+  --           if cmp.visible_docs() then
+  --             cmp.scroll_docs(-4)
+  --           else
+  --             cmp.open_docs()
+  --           end
+  --         end,
+  --         ['<C-f>'] = function()
+  --           if cmp.visible_docs() then
+  --             cmp.scroll_docs(4)
+  --           else
+  --             cmp.open_docs()
+  --           end
+  --         end,
+  --         ['<C-y>'] = cmp.mapping.confirm { select = true },
+  --         ['<CR>'] = cmp.mapping.confirm {},
+  --         ['<Tab>'] = cmp.mapping.select_next_item(),
+  --         ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+  --         ['<C-Space>'] = function()
+  --           if not cmp.visible() then
+  --             cmp.complete()
+  --           else
+  --             cmp.close()
+  --             cmp.close_docs()
+  --           end
+  --         end,
+  --         ['<C-l>'] = cmp.mapping(function()
+  --           if luasnip.expand_or_locally_jumpable() then
+  --             luasnip.expand_or_jump()
+  --           end
+  --         end, { 'i', 's' }),
+  --         ['<C-h>'] = cmp.mapping(function()
+  --           if luasnip.locally_jumpable(-1) then
+  --             luasnip.jump(-1)
+  --           end
+  --         end, { 'i', 's' }),
+  --       },
+  --       sources = {
+  --         { name = 'copilot', group_index = 2 },
+  --         { name = 'nvim_lsp' },
+  --         { name = 'path' },
+  --         { name = 'luasnip' },
+  --         { name = 'buffer' },
+  --       },
+  --       snippet = {
+  --         expand = function(args)
+  --           luasnip.lsp_expand(args.body)
+  --         end,
+  --       },
+  --       formatting = {
+  --         format = require('nvim-highlight-colors').format,
+  --       },
+  --     }
+  --   end,
+  -- },
+
   {
     'jackMort/ChatGPT.nvim',
     event = 'VeryLazy',
@@ -597,15 +668,15 @@ require('lazy').setup {
     },
     config = function()
       require('chatgpt').setup {
-        openai_params = {
-          model = 'gpt-4-1106-preview',
-          frequency_penalty = 0,
-          presence_penalty = 0,
-          max_tokens = 4095,
-          temperature = 0.2,
-          top_p = 0.1,
-          n = 1,
-        },
+        -- openai_params = {
+        --   model = 'gpt-4-1106-preview',
+        --   frequency_penalty = 0,
+        --   presence_penalty = 0,
+        --   max_completion_tokens = 4095,
+        --   temperature = 0.2,
+        --   top_p = 0.1,
+        --   n = 1,
+        -- },
       }
       local map = function(modes, key, cmd, descrp)
         vim.keymap.set(modes, '<leader>c' .. key, cmd, { desc = 'GPT: ' .. descrp })
@@ -644,7 +715,7 @@ require('lazy').setup {
             vim.api.nvim_set_keymap('n', '<leader>pl', ':FlutterLspRestart<CR>', { noremap = true, silent = true })
             vim.api.nvim_set_keymap('n', '<leader>pll', ':FlutterLogToggle<CR>', { noremap = true, silent = true })
           end,
-          capabilities = require('cmp_nvim_lsp').default_capabilities(), -- for nvim-cmp (optional)
+          capabilities = require('blink.cmp').get_lsp_capabilities(),
           init_options = {
             closingLabels = true, -- Show closing labels in code
           },
@@ -655,6 +726,51 @@ require('lazy').setup {
       }
     end,
   },
+  -- {
+  --   'abecodes/tabout.nvim',
+  --   lazy = false,
+  --   config = function()
+  --     require('tabout').setup {
+  --       tabkey = '<Tab>', -- key to trigger tabout, set to an empty string to disable
+  --       backwards_tabkey = '<S-Tab>', -- key to trigger backwards tabout, set to an empty string to disable
+  --       act_as_tab = true, -- shift content if tab out is not possible
+  --       act_as_shift_tab = false, -- reverse shift content if tab out is not possible (if your keyboard/terminal supports <S-Tab>)
+  --       default_tab = '<C-t>', -- shift default action (only at the beginning of a line, otherwise <TAB> is used)
+  --       default_shift_tab = '<C-d>', -- reverse shift default action,
+  --       enable_backwards = true, -- well ...
+  --       completion = false, -- if the tabkey is used in a completion pum
+  --       tabouts = {
+  --         { open = "'", close = "'" },
+  --         { open = '"', close = '"' },
+  --         { open = '`', close = '`' },
+  --         { open = '(', close = ')' },
+  --         { open = '[', close = ']' },
+  --         { open = '{', close = '}' },
+  --       },
+  --       ignore_beginning = true, --[[ if the cursor is at the beginning of a filled element it will rather tab out than shift the content ]]
+  --       exclude = {}, -- tabout will ignore these filetypes
+  --     }
+  --   end,
+  --   dependencies = { -- These are optional
+  --     'nvim-treesitter/nvim-treesitter',
+  --     'L3MON4D3/LuaSnip',
+  --     'hrsh7th/nvim-cmp',
+  --   },
+  --   opt = true, -- Set this to true if the plugin is optional
+  --   event = 'InsertCharPre', -- Set the event to 'InsertCharPre' for better compatibility
+  --   priority = 1000,
+  -- },
+  -- {
+  --   'nvim-treesitter/nvim-treesitter-context',
+  --   opts = {},
+  -- },
+  -- {
+  --   'L3MON4D3/LuaSnip',
+  --   keys = function()
+  --     -- Disable default tab keybinding in LuaSnip
+  --     return {}
+  --   end,
+  -- },
 }
 
 -- require('lazy').setup({
