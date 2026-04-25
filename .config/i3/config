@@ -65,6 +65,7 @@ floating_modifier $mod
 tiling_drag titlebar
 
 ## Application Shortcuts
+bindsym $mod+Shift+f exec pcmanfm
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec --no-startup-id dmenu_run
@@ -102,6 +103,8 @@ bindsym $mod+Shift+T exec zsh -lic 'arecord -f cd -t wav /tmp/audio.wav & pid=$!
 
 # Google the current clipboard content
 bindsym $mod+Shift+g exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection clipboard | sed "s/ /+/g")"'
+# Google the current clipboard content meaning in arabic
+bindsym $mod+Shift+m exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection clipboard | sed "s/ /+/g") meaning in arabic"'
 # Google the current selected text (primary selection) or prompt
 bindsym $mod+g exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection primary | sed "s/ /+/g")"'
 
@@ -173,6 +176,11 @@ bindsym $mod+Shift+8 move container to workspace number $ws8 ; workspace number 
 bindsym $mod+Shift+9 move container to workspace number $ws9 ; workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10 ; workspace number $ws10
 
+# Move to scratchpad
+bindsym $mod+Shift+apostrophe   floating enable, resize set 90 ppt 90 ppt, move position center ,move scratchpad
+# Show scratchpad
+bindsym $mod+apostrophe scratchpad show
+
 ## Reload, Restart, Exit i3
 bindsym $mod+F5 reload
 bindsym $mod+Shift+F5 restart
@@ -217,10 +225,10 @@ mode "programs" {
     bindsym 1 exec google-chrome-stable --profile-directory="Profile 3"; exec slack; exec zoom; mode "default"
     bindsym s exec ~/sleeping_mode.sh; mode "default"
     bindsym l exec ~/scripts/openLinked.sh; mode "default"
-    bindsym v exec "find ~/Videos -type f \( -iname '*.mkv' -o -iname '*.mp4' \) -printf '%T@ %p\n' | sort -nr | cut -d' ' -f2- | dmenu -l 20 -i | xargs -r -I{} vlc {}"; mode "default"
+    bindsym v exec "find -L ~/Videos  -type f \( -iname '*.mkv' -o -iname '*.mp4' \) -printf '%T@ %p\n' | sort -nr | cut -d' ' -f2- | dmenu -l 20 -i | xargs -d'\n' -r -I{} vlc {}"; mode "default"
     bindsym u exec $term -e zsh -c "sudo pacman -Syu --noconfirm && echo 'DONE THE UPDATE' && read"; mode "default"
     bindsym Next exec "i3lock && systemctl hibernate "; mode "default"
-    bindsym c exec "xdg-open https://chatgpt.com/" ; mode "default"
+    bindsym c exec "xdg-open https://gemini.google.com/app" ; mode "default"
     bindsym f exec "pcmanfm" ; mode "default"
 }
 
@@ -250,15 +258,6 @@ bar {
         #         # statusline #d3c6aa
         # }
 }
-
-## Window Rules
-# for_window [class="zoom"] move container to workspace $ws5
-# for_window [class=".*"] floating disable
-
-# for_window [title=".*Phone_API.*"] floating disable
-# for_window [title=".*Phone_API.*"] move container to workspace current
-# for_window [title=".*Phone_API.*"] move absolute right
-# for_window [title=".*Phone_API.*"] resize set width 520px
 
 
 for_window [title=".*Phone_API.*"] floating disable
