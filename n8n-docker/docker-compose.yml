@@ -1,0 +1,48 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - WEBHOOK_URL=https://n8n.abdullah-khwahir.me
+      - N8N_HOST=n8n.abdullah-khwahir.me
+      - N8N_PROTOCOL=https
+      - GENERIC_TIMEZONE=Asia/Riyadh
+      - TZ=Asia/Riyadh
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_METRICS=true
+      - PUPPETEER_BROWSER_WS_ENDPOINT=ws://browserless:3000
+      - PUPPETEER_PROTOCOL=cdp
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - n8n_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  browserless:
+    image: browserless/chrome:latest
+    container_name: browserless
+    restart: unless-stopped
+    ports:
+      - "3033:3000"
+    environment:
+      - MAX_CONCURRENT_SESSIONS=10
+      - MAX_QUEUE_LENGTH=50
+      - CONNECTION_TIMEOUT=300000
+      - PREBOOT_CHROME=true
+    networks:
+      - n8n_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  n8n_data:
+    external: true
+
+networks:
+  n8n_net:
+    driver: bridge
