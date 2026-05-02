@@ -8,6 +8,34 @@ alias x="xclip -r -selection clipboard"
 alias tm="tmux "
 alias ta="tmux a"
 
+mfzf(){
+    type=$1
+    query=$2
+
+    # Run your movie command
+    results=$(movie "$type" "$query")
+
+    # If no results, exit
+    [ -z "$results" ] && { echo "No results found."; exit 1; }
+
+    # Pass results to fzf
+    selected=$(echo "$results" | fzf --ansi --preview 'echo {}' --height 80)
+
+    # If nothing selected, exit
+    [ -z "$selected" ] && exit 1
+
+    # Extract IMDb ID (last column)
+    index=$(echo "$selected" | grep -o -E '^\w+' )
+
+    downloads_res=$(movie "$type" "$query" -i "$index")
+
+    selecte_download=$(echo "$downloads_res" | fzf --ansi --preview 'echo {}' --height 80)
+
+    download_index=$(echo "$selecte_download" | grep -o -E '^\w+')
+
+    movie "$type" "$query" -i "$index" -d "$download_index"
+}
+
 # Helper Functions
 
 vman(){
@@ -59,7 +87,8 @@ md_to_pdf() {
     fi
     for file in "$1"/*.md; do
         if [ -f "$file" ]; then
-            pandoc "$file" -o "${file%.md}.pdf" --pdf-engine=pdfroff $2
+            echo "Converting $file to ${file%.md}.pdf"
+            pandoc "$file" -o "${file%.md}.pdf" --pdf-engine=typst  $2
         fi
     done
 }
@@ -81,4 +110,5 @@ else
     export EDITOR='nvim'
 fi
 
+export MANPAGER="nvim +Man\!"
 export ARCHFLAGS="-arch x86_64"

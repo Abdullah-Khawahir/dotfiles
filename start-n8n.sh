@@ -11,6 +11,7 @@ else
             --restart unless-stopped  \
             --name n8n \
             --hostname n8n.abdullah-khwahir.me \
+            --add-host=host.docker.internal:host-gateway \
             -e WEBHOOK_URL=https://n8n.abdullah-khwahir.me \
             -e N8N_HOST=n8n.abdullah-khwahir.me \
             -e N8N_PORT=5678 \

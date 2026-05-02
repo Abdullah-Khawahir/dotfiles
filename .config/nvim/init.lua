@@ -11,6 +11,14 @@ require 'mappings'
 require 'lsp'
 require('lazy').setup {
   require 'kickstart.plugins.debug', -- adds gitsigns recommend keymaps
+  require 'kickstart.iron_nvim',
+  -- {
+  --   'pmizio/typescript-tools.nvim',
+  --   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+  --   opts = {
+  --     expose_as_code_action = "all",
+  --   },
+  -- },
   -- {
   --   "Jezda1337/nvim-html-css",
   --   dependencies = { "hrsh7th/nvim-cmp", "nvim-treesitter/nvim-treesitter" }, -- Use this if you're using nvim-cmp
@@ -49,38 +57,59 @@ require('lazy').setup {
   --     },
   --   },
   -- },
-  -- {
-  --   'nvim-tree/nvim-tree.lua',
-  --   version = '*',
-  --   lazy = false,
-  --   dependencies = {
-  --     'nvim-tree/nvim-web-devicons',
-  --   },
-  --   config = function()
-  --     require('nvim-tree').setup {}
-  --     vim.keymap.set('n', '<leader>t', ':NvimTreeToggle<CR>', { silent = true })
-  --   end,
-  -- },
   {
-    'brenoprata10/nvim-highlight-colors',
-    opts = {},
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
     config = function()
-      local plugin = require 'nvim-highlight-colors'
-      plugin.setup {
-        render = 'virtual',
-        virtual_symbol_position = 'eol',
-        virtual_symbol = '█████████', -- pink #AA00FF ⬤ 🌑 █
-        virtual_symbol_prefix = ' ',
+      ---@type nvim_tree.config
+      local config = {
+        sort = {
+          sorter = 'case_sensitive',
+        },
+        view = {
+          width = 30,
+        },
+        renderer = {
+          group_empty = true,
+        },
+        filters = {
+          dotfiles = true,
+        },
       }
-      plugin.turnOn()
-      vim.keymap.set('n', '<leader>tc', plugin.toggle, { desc = 'toggle highlight color' })
+      require('nvim-tree').setup(config)
+      vim.keymap.set('n', '<leader>v', ':NvimTreeToggle<CR>', { silent = true })
+      vim.keymap.set('n', '<leader>V', function()
+        require('nvim-tree.api').tree.find_file { open = true, update_root = '<bang>', focus = true }
+      end, { silent = true })
     end,
   },
+  require 'kickstart.nvim-highlight-colors',
+  -- {
+  --   'brenoprata10/nvim-highlight-colors',
+  --   opts = {},
+  --   config = function()
+  --     local plugin = require 'nvim-highlight-colors'
+  --     plugin.setup {
+  --       render = 'virtual',
+  --       virtual_symbol_position = 'eol',
+  --       virtual_symbol = '█████████', -- pink #AA00FF ⬤ 🌑 █
+  --       virtual_symbol_prefix = ' ',
+  --     }
+  --     plugin.turnOn()
+  --     vim.keymap.set('n', '<leader>tc', plugin.toggle, { desc = 'toggle highlight color' })
+  --   end,
+  -- },
+
   {
     'echasnovski/mini.nvim',
     config = function()
       require('mini.ai').setup { n_lines = 500 }
-      local statusline = require 'mini.statusline'
+      -- local statusline = require 'mini.statusline'.setup()
+
       -- statusline.setup { use_icons = vim.g.have_nerd_font }
       -- require('mini.bracketed').setup {}
       ---@diagnostic disable-next-line: duplicate-set-field
@@ -90,26 +119,26 @@ require('lazy').setup {
     end,
   },
 
-  {
-    'LunarVim/bigfile.nvim',
-    config = function()
-      -- default config
-      require('bigfile').setup {
-        filesize = 1, -- size of the file in MiB, the plugin round file sizes to the closest MiB
-        pattern = { '*' }, -- autocmd pattern or function see <### Overriding the detection of big files>
-        features = { -- features to disable
-          'indent_blankline',
-          'illuminate',
-          'lsp',
-          'treesitter',
-          'syntax',
-          'matchparen',
-          'vimopts',
-          'filetype',
-        },
-      }
-    end,
-  },
+  -- {
+  --   'LunarVim/bigfile.nvim',
+  --   config = function()
+  --     -- default config
+  --     require('bigfile').setup {
+  --       filesize = 1, -- size of the file in MiB, the plugin round file sizes to the closest MiB
+  --       pattern = { '*' }, -- autocmd pattern or function see <### Overriding the detection of big files>
+  --       features = { -- features to disable
+  --         'indent_blankline',
+  --         'illuminate',
+  --         'lsp',
+  --         'treesitter',
+  --         'syntax',
+  --         'matchparen',
+  --         'vimopts',
+  --         'filetype',
+  --       },
+  --     }
+  --   end,
+  -- },
   -- {
   --   'folke/tokyonight.nvim',
   --   event = 'VimEnter', -- Load colorscheme on VimEnter to improve startup time
@@ -123,7 +152,6 @@ require('lazy').setup {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = true,
-    opts = ...,
     init = function()
       vim.cmd.colorscheme 'gruvbox'
       vim.cmd.hi 'Comment gui=none'
@@ -143,40 +171,35 @@ require('lazy').setup {
       },
     },
   },
-  {
-    'zbirenbaum/copilot-cmp',
-    config = function()
-      require('copilot_cmp').setup()
-    end,
-  },
-  {
-    'github/copilot.vim',
-    config = function()
-      -- require('copilot').setup {
-      --   suggestion = { enabled = false },
-      --   panel = { enabled = false },
-      -- }
-      vim.cmd ':Copilot disable'
-      vim.keymap.set('i', '<C-\\>', '<Plug>(copilot-suggest)')
-      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false,
-      })
-    end,
-  },
+  -- {
+  --   'zbirenbaum/copilot-cmp',
+  --   config = function()
+  --     require('copilot_cmp').setup()
+  --   end,
+  -- },
+  -- {
+  --   'github/copilot.vim',
+  --   config = function()
+  --     -- require('copilot').setup {
+  --     --   suggestion = { enabled = false },
+  --     --   panel = { enabled = false },
+  --     -- }
+  --     vim.cmd ':Copilot disable'
+  --     vim.keymap.set('i', '<C-\\>', '<Plug>(copilot-suggest)')
+  --     vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  --       expr = true,
+  --       replace_keycodes = false,
+  --     })
+  --   end,
+  -- },
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
-    event = 'VeryLazy', -- or a specific command like 'Telescope'
-    branch = '0.1.x',
+    -- event = 'VeryLazy', -- or a specific command like 'Telescope'
+    version = '*',
+    -- branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'make',
-        cond = function()
-          return vim.fn.executable 'make' == 1
-        end,
-      },
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
       -- { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
@@ -198,6 +221,7 @@ require('lazy').setup {
             '%.jpg',
             '%.jpg',
             'Migrations',
+            'venv',
           },
         },
       }
@@ -251,47 +275,23 @@ require('lazy').setup {
   },
   {
     'yetone/avante.nvim',
+    build = vim.fn.has 'win32' ~= 0 and 'powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false' or 'make',
     event = 'VeryLazy',
     lazy = false,
-    version = '*', -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
-    opts = {
-      hints = { enabled = false },
-      provider = 'openai',
-      providers = {
-        openai = {
-          endpoint = 'https://api.openai.com/v1',
-          model = 'o4-mini', -- your desired model (or use gpt-4o, etc.)
-          timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
-          extra_request_body = {
-            temperature = 1,
-            max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-            reasoning_effort = 'medium', -- low|medium|high, only used for reasoning models
-          },
-        },
-      },
-      rag_service = { -- RAG Service configuration
-        enabled = false, -- Enables the RAG service
-        host_mount = os.getenv 'HOME', -- Host mount path for the rag service (Docker will mount this path)
-        runner = 'docker', -- Runner for the RAG service (can use docker or nix)
-        llm = { -- Language Model (LLM) configuration for RAG service
-          provider = 'openai', -- LLM provider
-          endpoint = 'https://api.openai.com/v1', -- LLM API endpoint
-          api_key = 'OPENAI_API_KEY', -- Environment variable name for the LLM API key
-          model = 'gpt-4o-mini', -- LLM model name
-          extra = nil, -- Additional configuration options for LLM
-        },
-        embed = { -- Embedding model configuration for RAG service
-          provider = 'openai', -- Embedding provider
-          endpoint = 'https://api.openai.com/v1', -- Embedding API endpoint
-          api_key = 'OPENAI_API_KEY', -- Environment variable name for the embedding API key
-          model = 'text-embedding-3-large', -- Embedding model name
-          extra = nil, -- Additional configuration options for the embedding model
-        },
-        docker_extra_args = '', -- Extra arguments to pass to the docker command
-      },
-    },
+    version = false, -- Never set this value to "*"! Never!
     dependencies = {
-      'nvim-treesitter/nvim-treesitter',
+      {
+        'ravitemer/mcphub.nvim',
+        config = function()
+          require('mcphub').setup {
+            extensions = {
+              avante = {
+                make_slash_commands = true,
+              },
+            },
+          }
+        end,
+      },
       'stevearc/dressing.nvim',
       'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
@@ -301,7 +301,7 @@ require('lazy').setup {
       'hrsh7th/nvim-cmp', -- autocompletion for avante commands and mentions
       'ibhagwan/fzf-lua', -- for file_selector provider fzf
       'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
-      -- "zbirenbaum/copilot.lua",          -- for providers='copilot'
+      -- 'zbirenbaum/copilot.lua', -- for providers='copilot'
       {
         -- support for image pasting
         'HakonHarnes/img-clip.nvim',
@@ -324,10 +324,137 @@ require('lazy').setup {
         'MeanderingProgrammer/render-markdown.nvim',
         opts = {
           file_types = { 'markdown', 'Avante' },
+          latex = { enabled = false },
+          -- anti_conceal = {
+          --   enabled = false,
+          -- },
         },
         ft = { 'markdown', 'Avante' },
       },
     },
+    -- opts = {},
+    config = function()
+      require('avante').setup {
+        acp_providers = {
+          ['gemini-cli'] = {
+            command = 'gemini',
+            args = { '--experimental-acp' },
+            env = {
+              NODE_NO_WARNINGS = '1',
+              GEMINI_API_KEY = os.getenv 'GEMINI_API_KEY',
+            },
+          },
+          ['goose'] = {
+            command = 'goose',
+            args = { 'acp' },
+          },
+
+          ['opencode'] = {
+            command = 'opencode',
+            args = { 'acp' },
+          },
+        },
+        behaviour = {
+          enable_fastapply = true, -- Enable Fast Apply feature
+        },
+        instructions_file = 'AGENTS.md',
+        selection = {
+          enabled = false,
+          hint_display = 'delayed',
+        },
+        windows = {
+          ---@type "right" | "left" | "top" | "bottom"
+          position = 'right', -- the position of the sidebar
+          wrap = true, -- similar to vim.o.wrap
+          width = 40, -- default % based on available width
+          sidebar_header = {
+            enabled = true, -- true, false to enable/disable the header
+            align = 'center', -- left, center, right for title
+            rounded = true,
+          },
+          input = {
+            prefix = '> ',
+            height = 20, -- Height of the input window in vertical layout
+          },
+          ask = {
+            floating = false, -- Open the 'AvanteAsk' prompt in a floating window
+            start_insert = false, -- Start insert mode when opening the ask window
+            border = 'rounded',
+          },
+        },
+        -- auto_suggestions_provider = 'ollama',
+
+        -- provider = 'ollama',
+        -- provider = 'openrouter',
+        -- provider = 'goose',
+        provider = 'openrouter',
+        providers = {
+          openai = {
+            endpoint = 'https://api.openai.com/v1',
+            model = 'gpt-5.4',
+            timeout = 30000,
+            -- extra_request_body = {
+            --   temperature = 0.1,
+            -- },
+          },
+
+          deepseek = {
+            __inherited_from = 'openai',
+            api_key_name = 'DEEPSEEK_API_KEY',
+            endpoint = 'https://api.deepseek.com',
+            model = 'deepseek-coder',
+          },
+
+          openrouter = {
+            __inherited_from = 'openai',
+            endpoint = 'https://openrouter.ai/api/v1',
+            api_key_name = 'OPENROUTER_API_KEY',
+            -- model = 'deepseek/deepseek-r1',
+            -- model = 'deepseek/deepseek-v3.2',
+            -- model = 'openrouter/auto',
+            model = 'openai/gpt-oss-120b:free',
+            -- model = 'nvidia/nemotron-3-super-120b-a12b:free',
+          },
+          ollama = {
+            endpoint = 'http://127.0.0.1:11434',
+            -- model = 'deepseek-coder-v2',
+            -- model = 'qwen3.5:397b-cloud',
+            -- model = 'qwen2.5-coder',
+            -- model = 'qwen3.5:2b',
+            -- model = 'gpt-oss:20b-cloud',
+            -- model = 'gemma4:31b-cloud',
+            -- model = 'qwen3-coder-next:cloud',
+            keep_alive = '30m',
+            -- extra_request_body = {
+            --   options = {
+            --     temperature = 0.75,
+            --     num_ctx = 20480,
+            --   },
+            -- },
+          },
+        },
+        system_prompt = function()
+          local hub = require('mcphub').get_hub_instance()
+          return hub and hub:get_active_servers_prompt() or ''
+        end,
+        custom_tools = function()
+          return {
+            require('mcphub.extensions.avante').mcp_tool(),
+          }
+        end,
+      }
+      -- vim.keymap.set({ 'n', 'i', 'v' }, '<C-h>', '<cmd>AvanteToggle<CR>', { desc = 'Toggle Avante' })
+
+      vim.keymap.set('n', 'ZQ', function()
+        local ft = vim.bo.filetype:lower()
+
+        if ft:match '^avante' then
+          vim.cmd 'AvanteToggle'
+        else
+          vim.cmd 'q!'
+        end
+      end, { desc = 'Smart quit (Avante ft or force quit)' })
+    end,
   },
   {
     'tpope/vim-fugitive',
@@ -354,29 +481,36 @@ require('lazy').setup {
       require('nvim-autopairs').setup {}
     end,
   },
-  { -- Highlight, edit, and navigate code
+  {
     'nvim-treesitter/nvim-treesitter',
+    lazy = false,
     build = ':TSUpdate',
-    opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
-      auto_install = true,
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = { 'ruby' },
-        disable = function(lang, buf)
-          local max_filesize = 1024 * 1024 -- 1 MB
-          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-          if ok and stats and stats.size > max_filesize then
-            return true
-          end
-        end,
-      },
-    },
-    config = function(_, opts)
-      require('nvim-treesitter.install').prefer_git = true
-      require('nvim-treesitter.configs').setup(opts)
-    end,
   },
+
+  -- { -- Highlight, edit, and navigate code
+  --   'nvim-treesitter/nvim-treesitter',
+  --   branch = 'master',
+  --   build = ':TSUpdate',
+  --   opts = {
+  --     ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+  --     auto_install = true,
+  --     highlight = {
+  --       enable = true,
+  --       additional_vim_regex_highlighting = { 'ruby' },
+  --       disable = function(lang, buf)
+  --         local max_filesize = 1024 * 1024 -- 1 MB
+  --         local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+  --         if ok and stats and stats.size > max_filesize then
+  --           return true
+  --         end
+  --       end,
+  --     },
+  --   },
+  --   config = function(_, opts)
+  --     require('nvim-treesitter.install').prefer_git = true
+  --     require('nvim-treesitter.configs').setup(opts)
+  --   end,
+  -- },
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -395,7 +529,8 @@ require('lazy').setup {
     },
     config = function()
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
+      -- capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
+      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       local servers = {
         -- html = {},
@@ -439,7 +574,9 @@ require('lazy').setup {
 
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua', -- Lua formatter
+        'stylua', -- Lua formatter,
+        'lemminx',
+        'json-lsp',
       })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -492,9 +629,9 @@ require('lazy').setup {
 
       vim.lsp.config('pyright', {
         capabilities = capabilities,
-        venv = 'venv',
+        venv = '.venv',
         analysis = {
-          venvPath = '/home/a/venv',
+          -- venvPath = '/home/a/venv',
           autoSearchPaths = true,
           useLibraryCodeForTypes = true,
         },
@@ -502,198 +639,307 @@ require('lazy').setup {
       })
     end,
   },
-  {
-    'Saghen/blink.cmp',
-    version = '1.*', -- 👈 important
-    event = 'InsertEnter',
-    dependencies = {
-      'L3MON4D3/LuaSnip',
-    },
-
-    opts = {
-      keymap = {
-        preset = 'default',
-        -- Trigger
-        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
-        -- Navigate
-        ['<C-n>'] = { 'select_next' },
-        ['<C-p>'] = { 'select_prev' },
-        ['<Tab>'] = { 'select_next', 'fallback' },
-        ['<S-Tab>'] = { 'select_prev', 'fallback' },
-
-        -- Accept (like VSCode Enter)
-        ['<CR>'] = { 'accept', 'fallback' },
-      },
-      completion = {
-        documentation = { auto_show = true },
-
-        list = {
-          selection = {
-            preselect = false,
-            auto_insert = true,
-          },
-        },
-        ghost_text = {
-          enabled = true, -- 👈 VSCode inline preview
-        },
-      },
-      sources = {
-        default = {
-          'lsp',
-          'path',
-          'snippets',
-          'buffer',
-        },
-        per_filetype = {
-          sql = { 'snippets', 'dadbod', 'buffer' },
-        },
-        providers = {
-          dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
-        },
-      },
-    },
-  },
-
-  -- { -- Autocompletion
-  --   'hrsh7th/nvim-cmp',
+  -- {
+  --   'Saghen/blink.cmp',
+  --   version = '1.*', -- 👈 important
   --   event = 'InsertEnter',
   --   dependencies = {
-  --     -- Snippet Engine & its associated nvim-cmp source
-  --     {
-  --       'L3MON4D3/LuaSnip',
-  --       build = (function()
-  --         if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-  --           return
-  --         end
-  --         return 'make install_jsregexp'
-  --       end)(),
-  --       dependencies = {
-  --         {
-  --           'rafamadriz/friendly-snippets',
-  --           config = function()
-  --             require('luasnip.loaders.from_vscode').lazy_load()
-  --             require('luasnip.loaders.from_lua').load { paths = '~/.config/nvim/lua/snippets/' }
-  --           end,
+  --     'rafamadriz/friendly-snippets', -- 👈 REQUIRED (actual snippets)
+  --    'xabikos/vscode-react',
+  --    -- { 'L3MON4D3/LuaSnip', version = 'v2.*' },
+  --     -- 'Kaiser-Yang/blink-cmp-avante',
+  --     'hrsh7th/vim-vsnip',
+  --     -- 'https://codeberg.org/FelipeLema/bink-cmp-vsnip.git',
+  --     -- 'echasnovski/mini.snippets',
+  --   },
+  --
+  --   opts = {
+  --     snippets = { preset = 'vsnip' },
+  --     keymap = {
+  --       preset = 'default',
+  --       -- Trigger
+  --       ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+  --       -- Navigate
+  --       ['<C-n>'] = { 'select_next' },
+  --       ['<C-p>'] = { 'select_prev' },
+  --       ['<S-Tab>'] = { 'select_prev', 'fallback' },
+  --
+  --       ['<C-u>'] = { 'scroll_signature_up', 'fallback' },
+  --       ['<C-d>'] = { 'scroll_signature_down', 'fallback' },
+  --
+  --       -- default in all keymap presets
+  --       -- ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
+  --       -- Accept (like VSCode Enter)
+  --       ['<CR>'] = { 'accept', 'fallback' },
+  --     },
+  --     signature = { enabled = true },
+  --     completion = {
+  --       documentation = { auto_show = true },
+  --       list = {
+  --         selection = {
+  --           preselect = false,
+  --           auto_insert = true,
+  --         },
+  --       },
+  --       ghost_text = {
+  --         enabled = false,
+  --       },
+  --     },
+  --     sources = {
+  --       default = { 'lsp', 'path', 'snippets', 'buffer' },
+  --       per_filetype = {
+  --         sql = { 'snippets', 'dadbod', 'buffer' },
+  --       },
+  --       providers = {
+  --         dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
+  --         avante = {
+  --           module = 'blink-cmp-avante',
+  --           name = 'Avante',
   --         },
   --       },
   --     },
-  --     'saadparwaiz1/cmp_luasnip',
-  --     'hrsh7th/cmp-nvim-lsp',
-  --     'hrsh7th/cmp-path',
   --   },
-  --   config = function()
-  --     local cmp = require 'cmp'
-  --     local luasnip = require 'luasnip'
-  --     cmp.setup {
-  --       view = {
-  --         docs = {
-  --           auto_open = true,
-  --         },
-  --       },
-  --       window = {
-  --         completion = cmp.config.window.bordered(),
-  --         documentation = cmp.config.window.bordered(),
-  --       },
-  --       completion = { completeopt = 'menu,menuone,preview,noselect,popup' },
-  --       mapping = cmp.mapping.preset.insert {
-  --         ['<C-n>'] = cmp.mapping.select_next_item(),
-  --         ['<C-p>'] = cmp.mapping.select_prev_item(),
-  --         ['<C-b>'] = function()
-  --           if cmp.visible_docs() then
-  --             cmp.scroll_docs(-4)
-  --           else
-  --             cmp.open_docs()
-  --           end
-  --         end,
-  --         ['<C-f>'] = function()
-  --           if cmp.visible_docs() then
-  --             cmp.scroll_docs(4)
-  --           else
-  --             cmp.open_docs()
-  --           end
-  --         end,
-  --         ['<C-y>'] = cmp.mapping.confirm { select = true },
-  --         ['<CR>'] = cmp.mapping.confirm {},
-  --         ['<Tab>'] = cmp.mapping.select_next_item(),
-  --         ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-  --         ['<C-Space>'] = function()
-  --           if not cmp.visible() then
-  --             cmp.complete()
-  --           else
-  --             cmp.close()
-  --             cmp.close_docs()
-  --           end
-  --         end,
-  --         ['<C-l>'] = cmp.mapping(function()
-  --           if luasnip.expand_or_locally_jumpable() then
-  --             luasnip.expand_or_jump()
-  --           end
-  --         end, { 'i', 's' }),
-  --         ['<C-h>'] = cmp.mapping(function()
-  --           if luasnip.locally_jumpable(-1) then
-  --             luasnip.jump(-1)
-  --           end
-  --         end, { 'i', 's' }),
-  --       },
-  --       sources = {
-  --         { name = 'copilot', group_index = 2 },
-  --         { name = 'nvim_lsp' },
-  --         { name = 'path' },
-  --         { name = 'luasnip' },
-  --         { name = 'buffer' },
-  --       },
-  --       snippet = {
-  --         expand = function(args)
-  --           luasnip.lsp_expand(args.body)
-  --         end,
-  --       },
-  --       formatting = {
-  --         format = require('nvim-highlight-colors').format,
-  --       },
-  --     }
-  --   end,
   -- },
 
-  {
-    'jackMort/ChatGPT.nvim',
-    event = 'VeryLazy',
+  { -- Autocompletion
+    'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
     dependencies = {
-      'MunifTanjim/nui.nvim',
-      'nvim-lua/plenary.nvim',
+      -- Snippet Engine & its associated nvim-cmp source
       {
-        'folke/trouble.nvim',
-        config = true,
+        'L3MON4D3/LuaSnip',
+        build = (function()
+          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+            return
+          end
+          return 'make install_jsregexp'
+        end)(),
+        dependencies = {
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+              require('luasnip.loaders.from_lua').load { paths = '~/.config/nvim/lua/snippets/' }
+            end,
+          },
+        },
       },
-      'nvim-telescope/telescope.nvim',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      'hrsh7th/cmp-buffer',
+      'onsails/lspkind.nvim',
+      'lukas-reineke/cmp-under-comparator',
     },
     config = function()
-      require('chatgpt').setup {
-        -- openai_params = {
-        --   model = 'gpt-4-1106-preview',
-        --   frequency_penalty = 0,
-        --   presence_penalty = 0,
-        --   max_completion_tokens = 4095,
-        --   temperature = 0.2,
-        --   top_p = 0.1,
-        --   n = 1,
+      local cmp = require 'cmp'
+      local luasnip = require 'luasnip'
+      cmp.setup {
+        view = {
+          docs = {
+            auto_open = true,
+          },
+        },
+        -- window = {
+        --   completion = cmp.config.window.bordered(),
+        --   documentation = cmp.config.window.bordered(),
+        -- },
+        completion = { completeopt = 'menu,menuone,preview,noselect,popup' },
+        mapping = cmp.mapping.preset.insert {
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-b>'] = function()
+            if cmp.visible_docs() then
+              cmp.scroll_docs(-4)
+            else
+              cmp.open_docs()
+            end
+          end,
+          ['<C-f>'] = function()
+            if cmp.visible_docs() then
+              cmp.scroll_docs(4)
+            else
+              cmp.open_docs()
+            end
+          end,
+          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm {},
+          ['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          ['<C-Space>'] = function()
+            if not cmp.visible() then
+              cmp.complete()
+            else
+              cmp.close()
+              cmp.close_docs()
+            end
+          end,
+          ['<C-l>'] = cmp.mapping(function()
+            if luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            end
+          end, { 'i', 's' }),
+          ['<C-h>'] = cmp.mapping(function()
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            end
+          end, { 'i', 's' }),
+        },
+        sources = {
+          { name = 'nvim_lsp' },
+          -- { name = 'copilot', group_index = 2 },
+          { name = 'path' },
+          { name = 'luasnip' },
+          { name = 'buffer' },
+        },
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        -- formatting = {
+        --   format = require('nvim-highlight-colors').format,
         -- },
       }
-      local map = function(modes, key, cmd, descrp)
-        vim.keymap.set(modes, '<leader>c' .. key, cmd, { desc = 'GPT: ' .. descrp })
-      end
-
-      map({ 'n', 'v' }, 'c', '<cmd>ChatGPT<CR>', 'ChatGPT')
-      map({ 'n', 'v' }, 'e', '<cmd>ChatGPTEditWithInstruction<CR>', 'Edit with instruction')
-      map({ 'n', 'v' }, 'g', '<cmd>ChatGPTRun grammar_correction<CR>', 'Grammar Correction')
-      map({ 'n', 'v' }, 't', '<cmd>ChatGPTRun translate<CR>', 'Translate')
-      map({ 'n', 'v' }, 'd', '<cmd>ChatGPTRun docstring<CR>', 'Docstring')
-      map({ 'n', 'v' }, 'o', '<cmd>ChatGPTRun optimize_code<CR>', 'Optimize Code')
-      map({ 'n', 'v' }, 'f', '<cmd>ChatGPTRun fix_bugs<CR>', 'Fix Bugs')
-      map({ 'n', 'v' }, 'r', '<cmd>ChatGPTRun roxygen_edit<CR>', 'Roxygen Edit')
-      map({ 'n', 'v' }, 'l', '<cmd>ChatGPTRun code_readability_analysis<CR>', 'Code Readability Analysis')
-      map({ 'n', 'v' }, 'h', '<cmd>ChatGPTRun explain_code<CR>', 'Code Explaination')
     end,
   },
+  -- {
+  --   'nickjvandyke/opencode.nvim',
+  --   version = '*',
+  --   dependencies = {
+  --     {
+  --       'folke/snacks.nvim',
+  --       optional = false,
+  --       opts = {
+  --         input = {},
+  --         picker = {
+  --           actions = {
+  --             opencode_send = function(...)
+  --               return require('opencode').snacks_picker_send(...)
+  --             end,
+  --           },
+  --           win = {
+  --             input = {
+  --               keys = {
+  --                 ['<a-a>'] = { 'opencode_send', mode = { 'n', 'i' } },
+  --               },
+  --             },
+  --           },
+  --         },
+  --       },
+  --     },
+  --   },
+  --
+  --   config = function()
+  --     vim.g.opencode_opts = {
+  --       -- keep minimal; extend later if needed
+  --     }
+  --
+  --     vim.o.autoread = true
+  --     local function map(modes, key, prompt, desc)
+  --       vim.keymap.set(modes, '<leader>c' .. key, function()
+  --         require('opencode').ask(prompt, { submit = true })
+  --       end, { desc = 'AI: ' .. desc })
+  --     end
+  --
+  --     vim.keymap.set({ 'n', 'v' }, '<leader>cc', function()
+  --       require('opencode').toggle()
+  --     end, { desc = 'AI: toogle opencode ' })
+  --
+  --     map({ 'n', 'v' }, 'e', '@this: Edit this according to the instruction I will provide.', 'Edit with instruction')
+  --     map({ 'n', 'v' }, 'g', '@this: Fix grammar and improve clarity.', 'Grammar Correction')
+  --     map({ 'n', 'v' }, 't', '@this: Translate this to English.', 'Translate')
+  --     map({ 'n', 'v' }, 'd', '@this: Write a proper docstring for this code.', 'Docstring')
+  --     map({ 'n', 'v' }, 'o', '@this: Optimize this code for performance and readability without changing behavior.', 'Optimize Code')
+  --     map({ 'n', 'v' }, 'f', '@this: Fix bugs. Return only the corrected code.', 'Fix Bugs')
+  --     map({ 'n', 'v' }, 'r', '@this: Improve comments in roxygen style.', 'Roxygen Edit')
+  --     map({ 'n', 'v' }, 'l', '@this: Analyze code readability and suggest improvements.', 'Code Readability')
+  --     map({ 'n', 'v' }, 'h', '@this: Explain this code step by step.', 'Explain Code')
+  --     ------------------------------------------------------------------
+  --     -- Core opencode keymaps (recommended)
+  --     ------------------------------------------------------------------
+  --     -- vim.keymap.set({ 'n', 'x' }, '<C-a>', function()
+  --     --   require('opencode').ask('@this: ', { submit = true })
+  --     -- end, { desc = 'Ask AI…' })
+  --     --
+  --     -- vim.keymap.set({ 'n', 'x' }, '<C-x>', function()
+  --     --   require('opencode').select()
+  --     -- end, { desc = 'AI actions…' })
+  --     --
+  --     -- vim.keymap.set({ 'n', 't' }, '<C-.>', function()
+  --     --   require('opencode').toggle()
+  --     -- end, { desc = 'Toggle AI' })
+  --
+  --     ------------------------------------------------------------------
+  --     -- Operator support (VERY powerful)
+  --     ------------------------------------------------------------------
+  --     -- vim.keymap.set({ 'n', 'x' }, 'go', function()
+  --     --   return require('opencode').operator '@this '
+  --     -- end, { expr = true, desc = 'Send motion to AI' })
+  --     --
+  --     -- vim.keymap.set('n', 'goo', function()
+  --     --   return require('opencode').operator '@this ' .. '_'
+  --     -- end, { expr = true, desc = 'Send line to AI' })
+  --
+  --     ------------------------------------------------------------------
+  --     -- Scrolling inside AI window
+  --     ------------------------------------------------------------------
+  --     -- vim.keymap.set('n', '<S-C-u>', function()
+  --     --   require('opencode').command 'session.half.page.up'
+  --     -- end, { desc = 'Scroll AI up' })
+  --     --
+  --     -- vim.keymap.set('n', '<S-C-d>', function()
+  --     --   require('opencode').command 'session.half.page.down'
+  --     -- end, { desc = 'Scroll AI down' })
+  --
+  --     ------------------------------------------------------------------
+  --     -- Fix conflicts with default Vim increment/decrement
+  --     ------------------------------------------------------------------
+  --     -- vim.keymap.set('n', '+', '<C-a>', { noremap = true, desc = 'Increment' })
+  --     -- vim.keymap.set('n', '-', '<C-x>', { noremap = true, desc = 'Decrement' })
+  --   end,
+  -- },
+  -- {
+  --   'jackMort/ChatGPT.nvim',
+  --   event = 'VeryLazy',
+  --   dependencies = {
+  --     'MunifTanjim/nui.nvim',
+  --     'nvim-lua/plenary.nvim',
+  --     {
+  --       'folke/trouble.nvim',
+  --       config = true,
+  --     },
+  --     'nvim-telescope/telescope.nvim',
+  --   },
+  --   config = function()
+  --     require('chatgpt').setup {
+  --       -- openai_params = {
+  --       --   model = 'gpt-4-1106-preview',
+  --       --   frequency_penalty = 0,
+  --       --   presence_penalty = 0,
+  --       --   max_completion_tokens = 4095,
+  --       --   temperature = 0.2,
+  --       --   top_p = 0.1,
+  --       --   n = 1,
+  --       -- },
+  --     }
+  --     local map = function(modes, key, cmd, descrp)
+  --       vim.keymap.set(modes, '<leader>c' .. key, cmd, { desc = 'GPT: ' .. descrp })
+  --     end
+  --
+  --     map({ 'n', 'v' }, 'c', '<cmd>ChatGPT<CR>', 'ChatGPT')
+  --     map({ 'n', 'v' }, 'e', '<cmd>ChatGPTEditWithInstruction<CR>', 'Edit with instruction')
+  --     map({ 'n', 'v' }, 'g', '<cmd>ChatGPTRun grammar_correction<CR>', 'Grammar Correction')
+  --     map({ 'n', 'v' }, 't', '<cmd>ChatGPTRun translate<CR>', 'Translate')
+  --     map({ 'n', 'v' }, 'd', '<cmd>ChatGPTRun docstring<CR>', 'Docstring')
+  --     map({ 'n', 'v' }, 'o', '<cmd>ChatGPTRun optimize_code<CR>', 'Optimize Code')
+  --     map({ 'n', 'v' }, 'f', '<cmd>ChatGPTRun fix_bugs<CR>', 'Fix Bugs')
+  --     map({ 'n', 'v' }, 'r', '<cmd>ChatGPTRun roxygen_edit<CR>', 'Roxygen Edit')
+  --     map({ 'n', 'v' }, 'l', '<cmd>ChatGPTRun code_readability_analysis<CR>', 'Code Readability Analysis')
+  --     map({ 'n', 'v' }, 'h', '<cmd>ChatGPTRun explain_code<CR>', 'Code Explaination')
+  --   end,
+  -- },
   {
     'akinsho/flutter-tools.nvim',
     lazy = false,
@@ -715,7 +961,8 @@ require('lazy').setup {
             vim.api.nvim_set_keymap('n', '<leader>pl', ':FlutterLspRestart<CR>', { noremap = true, silent = true })
             vim.api.nvim_set_keymap('n', '<leader>pll', ':FlutterLogToggle<CR>', { noremap = true, silent = true })
           end,
-          capabilities = require('blink.cmp').get_lsp_capabilities(),
+          -- capabilities = require('blink.cmp').get_lsp_capabilities(),
+          capabilities = require('cmp_nvim_lsp').default_capabilities(),
           init_options = {
             closingLabels = true, -- Show closing labels in code
           },
@@ -726,6 +973,7 @@ require('lazy').setup {
       }
     end,
   },
+  { 'nvim-tree/nvim-web-devicons', opts = {} },
   -- {
   --   'abecodes/tabout.nvim',
   --   lazy = false,

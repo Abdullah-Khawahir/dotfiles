@@ -30,7 +30,7 @@ vim.opt.timeoutlen     = 1000
 vim.opt.splitright     = true
 vim.opt.splitbelow     = true
 vim.opt.list           = true
-vim.opt.listchars      = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars      = { tab = '» ', trail = '·', nbsp = '␣' , space = "·",}
 vim.opt.inccommand     = 'split'
 vim.opt.cursorline     = true
 vim.opt.scrolloff      = 10
@@ -66,6 +66,9 @@ vim.cmd("set dictionary=/usr/share/dict/cracklib-small")
 vim.cmd("packadd cfilter")
 
 --netrw
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 vim.g.netrw_banner          = 0
 vim.g.netrw_fastbrowse      = 0
 vim.g.netrw_keepdir         = 1

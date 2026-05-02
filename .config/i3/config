@@ -25,6 +25,7 @@ exec_always --no-startup-id xsel
 exec_always --no-startup-id xclip
 exec_always --no-startup-id nm-applet
 exec_always --no-startup-id kdeconnect-indicator
+exec --no-startup-id handy --start-hidden 
 
 ## ToucPad
 exec_always --no-startup-id xinput set-prop  "FTCS0038:00 2808:0106 Touchpad" "libinput Tapping Enabled" 1
@@ -97,14 +98,25 @@ bindsym $mod+Shift+n exec "mkdir ~/Notes/ -p ; ls -1 -t ~/Notes | dmenu -i > /tm
 bindsym $mod+Shift+Ctrl+n exec "mkdir ~/Notes/ -p ; echo -n '' | dmenu > /tmp/notefile; [ -s /tmp/notefile ] && $term -- zsh -c 'cd ~/Notes/ && nvim ~/Notes/$(cat /tmp/notefile) && rm /tmp/notefile'"
 
 ## Transcribe
-bindsym $mod+Shift+T exec zsh -lic 'arecord -f cd -t wav /tmp/audio.wav & pid=$! && echo "Recording... (Press Enter to stop)" | dmenu -p "Recording" && kill $pid && python ~/scripts/transcribe.py /tmp/audio.wav | xclip -r && echo "Done" | dmenu'
+# bindsym $mod+Shift+T exec zsh -lic 'arecord -f cd -t wav /tmp/audio.wav & pid=$! && echo "Recording... (Press Enter to stop)" | dmenu -p "Recording" && kill $pid && python ~/scripts/transcribe.py /tmp/audio.wav | xclip -r && echo "Done" | dmenu'
 # zsh -lic "arecord -f cd -t wav /tmp/audio.wav & pid=$! && echo 'Recording... (Press Enter to stop)' | dmenu -p 'Recording' && kill $pid && python ~/scripts/transcribe.py /tmp/audio.wav"
+# bindsym $mod+u exec handy --toggle-transcription
+
+# 1. First press: Start transcription and enter 'ptt' mode
+# bindsym Mod4+p exec --no-startup-id handy --toggle-transcription; mode "ptt"
+#
+# mode "ptt" {
+# bindsym Mod4+p exec --no-startup-id "handy --toggle-transcription && sleep 0.6 && xclip -o -selection clipboard | xdotool type --delay 5 --file -"; mode "default"
+#     bindsym Escape mode "default"
+# }
+
 
 
 # Google the current clipboard content
 bindsym $mod+Shift+g exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection clipboard | sed "s/ /+/g")"'
 # Google the current clipboard content meaning in arabic
-bindsym $mod+Shift+m exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection clipboard | sed "s/ /+/g") meaning in arabic"'
+bindsym $mod+Shift+m exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=define:$(xclip -o -selection clipboard | sed "s/ /+/g") in arabic"'
+bindsym $mod+Shift+t exec --no-startup-id sh -c 'xdg-open "https://translate.google.com/?sl=auto&tl=ar&text=$(xclip -o -selection clipboard | sed "s/ /+/g")&op=translate"'
 # Google the current selected text (primary selection) or prompt
 bindsym $mod+g exec --no-startup-id sh -c 'xdg-open "https://www.google.com/search?q=$(xclip -o -selection primary | sed "s/ /+/g")"'
 

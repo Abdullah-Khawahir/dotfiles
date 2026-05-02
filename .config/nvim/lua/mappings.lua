@@ -105,10 +105,11 @@ nmap('<C-down>', '<C-w>-', { desc = 'resize down' })
 nmap('<C-up>', '<C-w>+', { desc = 'resize up' })
 
 
-nmap('<C-w><C-t>', ':term<CR>', { desc = 'open a term window' })
+-- nmap('<C-w><C-e>', ':term<CR>', { desc = 'open a term window' })
 -- for going one visual line down and up in wrap mode
 -- tabs
-nmap('<Tab>', "gt")
+
+
 nmap('<S-Tab>', "gT")
 nmap('<C-S-right>', ":+tabmove<CR>")
 nmap('<C-S-left>', ":-tabmove<CR>")
@@ -167,7 +168,7 @@ vmap('gX', '"gy:silent !xdg-open "https://www.google.com/search?q=<C-R>g"<left>'
 nmap('gX', '"gy:silent !xdg-open "https://www.google.com/search?q="<left>',
     { desc = "Google search" })
 
-nmap('<C-i>', '<C-i>', { noremap = true, silent = true })
+-- nmap('<C-i>', '<C-i>', { noremap = true, silent = true })
 
 nmap('<leader>ra', 'yiw:%sno/<C-r>"//gc<Left><Left><Left>', { desc = "Repalce Word in [a]ll lines" })
 vmap('<leader>ra', 'y:%sno/<C-r>"//gc<Left><Left><Left>', { desc = "Repalce Word in [a]ll lines" })
@@ -215,6 +216,9 @@ nmap('\\c', function()
         vim.opt_global.laststatus = 0
     end
 end, { desc = 'Cmd Toggle' })
+
+vim.keymap.set({ "n", "v" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
+vim.keymap.set({ "n", "v" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
 
 nmap('\\r', ':set wrap!<CR>', { desc = 'Wrap Toggle' })
 nmap('\\gr', ':windo set wrap!<CR>', { desc = 'Wrap Toggle' })
